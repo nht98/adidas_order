@@ -10,6 +10,7 @@ module.exports = {
     // 2 : đã được vận chuyển
     // 3 : đã nhận
     // 4 : huỷ đơn
+    // 5 : đã thanh toán
     bookorder: async (req, res) => {
         let size = 0;
         let colorProduct = "";
@@ -28,7 +29,9 @@ module.exports = {
         colorProduct = req.body.colorProduct;
         let trackDas = "";
         let trackFedex = "";
+        let pay_price = 0;
         if (linkOrder && quantity && address_ship && image && nation && idShiper && nameProduct && price && token) {
+            pay_price = price * 0.6;
             const order = new Order({
                 linkOrder: linkOrder,
                 size: size,
@@ -43,12 +46,13 @@ module.exports = {
                 status: status,
                 trackDas: trackDas,
                 trackFedex: trackFedex,
+                pay_price: pay_price
             });
             let check = await Account.findOne({
                 token: token
             });
             console.log(check)
-            if (check.permission == 10) {
+            if (check != null && check.permission == 10) {
                 order.save((err, resuft) => {
                     if (resuft) {
                         res.status(200).json({
