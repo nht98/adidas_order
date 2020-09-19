@@ -261,4 +261,37 @@ module.exports = {
         }
 
     },
+    donepay: async (req, res) => {
+        let token = req.body.token;
+        let _id = req.body._id;
+        const filter = {
+            _id: _id
+        }
+        let check = await Account.findOne({
+            token: token
+        });
+        try{
+            if (check.permission == 10) {
+                let result = await Order.findOneAndUpdate(filter, {status: 5});
+                console.log(result);
+                if (result != null) {
+                    res.status(200).json({
+                        message: "Thanh toán thành công!"
+                    });
+                } else {
+                    res.status(400).json({
+                        message: "Thanh toán thất bại!"
+                    });
+                }
+            } else {
+                res.status(400).json({
+                    message: "Không có quyền thực thi!"
+                });
+            }
+        }catch(ex){
+            res.status(400).json({
+                message: "Không có quyền thực thi!"
+            });
+        }
+    },
 }

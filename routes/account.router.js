@@ -4,4 +4,5 @@ module.exports = function(app){
     app.route('/api/change-password').post(ctrAccount.changePassword);
     app.route('/api/logout').post(ctrAccount.logout);
     app.route('/api/reg').post(ctrAccount.reg);
+    app.route('/api/getaccbynation').post(ctrAccount.getaccbynation);
 }
