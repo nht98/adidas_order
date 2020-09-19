@@ -6,11 +6,10 @@ const Order = require('../model/order.js');
 const Account = require('../model/account.js');
 module.exports = {
     // 0 : chờ khách check đơn
-    // 1 : đã check đơn
-    // 2 : đã được vận chuyển
-    // 3 : đã nhận
-    // 4 : huỷ đơn
-    // 5 : đã thanh toán
+    // 1 : đã vận chuyển
+    // 2 : đã nhận
+    // 3 : huỷ đơn
+    // 4 : đã thanh toán
     bookorder: async (req, res) => {
         let size = 0;
         let colorProduct = "";
@@ -29,6 +28,7 @@ module.exports = {
         colorProduct = req.body.colorProduct;
         let trackDas = "";
         let trackFedex = "";
+
         let pay_price = 0;
         if (linkOrder && quantity && address_ship && image && nation && idShiper && nameProduct && price && token) {
             pay_price = price * 0.6;
