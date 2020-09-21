@@ -5,7 +5,7 @@ const ObjectId = require('mongodb').ObjectId;
 const accs = require('../model/account.js');
 
 module.exports = {
-    login: async (req, res) => {
+    login: async(req, res) => {
         let username = req.body.username;
         let password = req.body.password;
         if (username && password) {
@@ -39,38 +39,58 @@ module.exports = {
             });
         }
     },
-    changePassword: async (req, res) => {
+    changePassword: async(req, res) => {
         let username = req.body.username;
         let password = req.body.password;
         let newpassword = req.body.newpassword;
-        let token = req.body.token;
-        if (username && password && newpassword && token) {
+        if (username && password && newpassword) {
             const filter = {
                 username: username,
-                password: md5(password),
-                token: token
+                password: md5(password)
             }
             const update = {
                 password: md5(newpassword)
             }
             let result = await accs.findOneAndUpdate(filter, update);
             console.log(result);
-            if (result != null) {
-                res.status(200).json({
-                    message: "Thay đổi mật khẩu thành công!"
-                });
-            } else {
+            try {
+                if (result._id) {
+                    let newToken = jwt.sign({
+                        username: username,
+                        password: md5(newpassword)
+                    }, fs.readFileSync('primary.key'));
+                    const filter1 = {
+                        username: username,
+                        password: md5(newpassword),
+                    }
+                    const update1 = {
+                        token: newToken
+                    }
+                    let result = await accs.findOneAndUpdate(filter1, update1);
+                    if (result != null) {
+                        result.token = newToken;
+                        res.status(200).json({
+                            message: "Thay đổi mật khẩu thành công!",
+                            data: result.token
+                        });
+                    } else {
+                        res.status(400).json({
+                            message: "Thay đổi mật khẩu thất bại!"
+                        });
+                    }
+                }
+            } catch (ex) {
                 res.status(400).json({
-                    message: "Thay đổi mật khẩu thất bại!"
+                    message: "Thay đổi mật khẩu thất bại1!"
                 });
             }
         } else {
             res.status(400).json({
-                message: "Thay đổi mật khẩu thất bại!"
+                message: "Thay đổi mật khẩu thất bại, vui lòng nhập đủ trường dữ liệu!"
             });
         }
     },
-    logout: async (req, res) => {
+    logout: async(req, res) => {
         let token = req.body.token;
         if (token) {
             const filter = {
@@ -95,7 +115,7 @@ module.exports = {
             });
         }
     },
-    reg: async (req, res) => {
+    reg: async(req, res) => {
         let token = req.body.token;
         let username = req.body.username;
         let password = md5(req.body.password);
@@ -105,9 +125,6 @@ module.exports = {
         let avatar = "https://st.quantrimang.com/photos/image/2017/04/08/anh-dai-dien-FB-200.jpg";
         let date_reg = Date.now();
         let nation = req.body.address;
-        const filter = {
-            token: token
-        }
         let newAcc = new accs({
             username: username,
             password: password,
@@ -127,12 +144,12 @@ module.exports = {
             newAcc.save((err, resuft) => {
                 if (resuft) {
                     res.status(200).json({
-                        message: "Đặt hàng thành công!",
+                        message: "Tạo tài khoản thành công!",
                         data: resuft
                     });
                 } else {
                     res.status(400).json({
-                        message: "Đặt hàng thất bại"
+                        message: "Tạo tài khoản thất bại"
                     });
                 }
             });
@@ -142,7 +159,7 @@ module.exports = {
             });
         }
     },
-    getaccbynation: async (req, res) => {
+    getaccbynation: async(req, res) => {
         let token = req.body.token;
         let nation = req.body.nation;
         let check = await accs.findOne({
@@ -155,13 +172,13 @@ module.exports = {
             if (nation == "US" || nation == "JP") {
                 let result = await accs.find(filter);
                 res.status(200).json({
-                    message: "Lấy danh sách đơn hàng thành công!",
+                    message: "Lấy danh sách thành viên thành công!",
                     data: result
                 });
-            }else {
+            } else {
                 let result = await accs.find();
                 res.status(200).json({
-                    message: "Lấy danh sách đơn hàng thành công!",
+                    message: "Lấy danh sách thành viên thành công!",
                     data: result
                 });
             }
