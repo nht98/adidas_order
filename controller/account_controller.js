@@ -188,4 +188,25 @@ module.exports = {
             });
         }
     },
+    checktoken: async(req, res) => {
+        let token = req.body.token;
+        let check = await accs.findOne({
+            token: token
+        });
+        try{
+            if(check.permission == 10 || check.permission ==1){
+                res.status(200).json({
+                    message: "token sống!"
+                });
+            }else{
+                res.status(400).json({
+                    message: "token không tồn tại!"
+                });
+            }
+        }catch(ex){
+            res.status(400).json({
+                message: "token không tồn tại!"
+            });
+        }
+    },
 }
