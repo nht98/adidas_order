@@ -28,9 +28,10 @@ module.exports = {
         colorProduct = req.body.colorProduct;
         let trackDas = "";
         let trackFedex = "";
+        let nameShiper = req.body.nameShiper;
 
         let pay_price = 0;
-        if (linkOrder && quantity && address_ship && image && nation && idShiper && nameProduct && price && token) {
+        if (linkOrder && quantity && address_ship && image && nation && idShiper && nameProduct && price && token && nameShiper) {
             pay_price = price * 0.6;
             const order = new Order({
                 linkOrder: linkOrder,
@@ -46,7 +47,8 @@ module.exports = {
                 status: status,
                 trackDas: trackDas,
                 trackFedex: trackFedex,
-                pay_price: pay_price
+                pay_price: pay_price,
+                nameShiper: nameShiper,
             });
             let check = await Account.findOne({
                 token: token
@@ -73,7 +75,7 @@ module.exports = {
 
         } else {
             res.status(400).json({
-                message: "Đặt hàng thất bại"
+                message: "Đặt hàng thất bại do thiếu trường dữ liệu"
             });
         }
     },
