@@ -238,7 +238,8 @@ module.exports = {
                     idOrder: idOrder,
                     email: email,
                     trackDas: trackDas,
-                    trackFedex: trackFedex
+                    trackFedex: trackFedex,
+                    status: 1
                 };
                 let result = await Order.findOneAndUpdate(filter, update);
                 console.log(result);
