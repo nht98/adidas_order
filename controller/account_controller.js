@@ -5,45 +5,38 @@ const ObjectId = require('mongodb').ObjectId;
 const accs = require('../model/account.js');
 
 module.exports = {
-    login: async(req, res) => {
+    login: async (req, res) => {
         let username = req.body.username;
         let password = req.body.password;
-        if (username && password) {
-            let newToken = jwt.sign({
-                username: username,
-                password: password
-            }, fs.readFileSync('primary.key'));
-            const filter = {
-                username: username,
-                password: md5(password),
-            }
-            const update = {
-                token: newToken
-            }
-            console.log(newToken);
-            let result = await accs.findOneAndUpdate(filter, update);
-            if (result != null) {
-                result.token = newToken;
-                res.status(200).json({
-                    message: "Đăng nhập thành công!",
-                    data: result
-                });
-            } else {
-                res.status(400).json({
-                    message: "Đăng nhập thất bại!"
-                });
-            }
+        let newToken = jwt.sign({
+            username: username,
+            password: password
+        }, fs.readFileSync('primary.key'));
+        const filter = {
+            username: username,
+            password: md5(password),
+        }
+        const update = {
+            token: newToken
+        }
+        console.log(newToken);
+        let result = await accs.findOneAndUpdate(filter, update);
+        if (result != null) {
+            result.token = newToken;
+            res.status(200).json({
+                message: "Đăng nhập thành công!",
+                data: result
+            });
         } else {
             res.status(400).json({
                 message: "Đăng nhập thất bại!"
             });
         }
     },
-    changePassword: async(req, res) => {
+    changePassword: async (req, res) => {
         let username = req.body.username;
         let password = req.body.password;
         let newpassword = req.body.newpassword;
-        if (username && password && newpassword) {
             const filter = {
                 username: username,
                 password: md5(password)
@@ -84,13 +77,9 @@ module.exports = {
                     message: "Thay đổi mật khẩu thất bại1!"
                 });
             }
-        } else {
-            res.status(400).json({
-                message: "Thay đổi mật khẩu thất bại, vui lòng nhập đủ trường dữ liệu!"
-            });
-        }
+       
     },
-    logout: async(req, res) => {
+    logout: async (req, res) => {
         let token = req.body.token;
         if (token) {
             const filter = {
@@ -115,32 +104,22 @@ module.exports = {
             });
         }
     },
-    reg: async(req, res) => {
-        let token = req.body.token;
-        let username = req.body.username;
-        let password = md5(req.body.password);
-        let full_name = req.body.full_name;
-        let permission = req.body.permission;
-        let address = req.body.address;
-        let avatar = "https://st.quantrimang.com/photos/image/2017/04/08/anh-dai-dien-FB-200.jpg";
-        let date_reg = Date.now();
-        let nation = req.body.address;
-        let newAcc = new accs({
-            username: username,
-            password: password,
-            full_name: full_name,
-            permission: permission,
-            address: address,
-            avatar: avatar,
-            date_reg: date_reg,
-            token: "",
-            nation: nation,
-        });
+    reg: async (req, res) => {
         let check = await accs.findOne({
-            token: token
+            token: req.body.token
         });
-        console.log(check)
         if (check != null && check.permission == 10) {
+            let newAcc = new accs({
+                username: req.body.username,
+                password: md5(req.body.password),
+                full_name: req.body.full_name,
+                permission: req.body.permission,
+                address: req.body.address,
+                avatar: "https://st.quantrimang.com/photos/image/2017/04/08/anh-dai-dien-FB-200.jpg",
+                date_reg: Date.now(),
+                token: "",
+                nation: req.body.address,
+            });
             newAcc.save((err, resuft) => {
                 if (resuft) {
                     res.status(200).json({
@@ -159,7 +138,7 @@ module.exports = {
             });
         }
     },
-    getaccbynation: async(req, res) => {
+    getaccbynation: async (req, res) => {
         let token = req.body.token;
         let nation = req.body.nation;
         let check = await accs.findOne({
@@ -169,7 +148,7 @@ module.exports = {
             const filter = {
                 nation: nation,
             }
-            if (nation == "US" || nation == "JP") {
+            if (nation == "US" || nation == "JP" || nation == "GER") {
                 let result = await accs.find(filter);
                 res.status(200).json({
                     message: "Lấy danh sách thành viên thành công!",
@@ -188,22 +167,22 @@ module.exports = {
             });
         }
     },
-    checktoken: async(req, res) => {
+    checktoken: async (req, res) => {
         let token = req.body.token;
         let check = await accs.findOne({
             token: token
         });
-        try{
-            if(check.permission == 10 || check.permission ==1){
+        try {
+            if (check.permission == 10 || check.permission == 1) {
                 res.status(200).json({
                     message: "token sống!"
                 });
-            }else{
+            } else {
                 res.status(400).json({
                     message: "token không tồn tại!"
                 });
             }
-        }catch(ex){
+        } catch (ex) {
             res.status(400).json({
                 message: "token không tồn tại!"
             });
