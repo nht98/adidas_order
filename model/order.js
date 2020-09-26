@@ -4,6 +4,7 @@ const orderSchema = new mongoose.Schema({
     linkOrder: String,
     size : String,
     quantity : Number,
+    realquantity: Number,
     address_ship : String,
     image : String,
     data_order : Date,

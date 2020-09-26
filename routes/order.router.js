@@ -7,4 +7,6 @@ module.exports = function(app){
     app.route('/api/getorderbystatus').post(ctrOrder.getorderbystatus);
     app.route('/api/updateorder').post(ctrOrder.updateorder);
     app.route('/api/donepay').post(ctrOrder.donepay);
+    app.route('/api/deleteorder').post(ctrOrder.deleteorder);
+    app.route('/api/childorder').post(ctrOrder.childorder);
 }
