@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const ObjectId = require('mongodb').ObjectId;
 const Order = require('../model/order.js');
 const Account = require('../model/account.js');
+const Child_order = require('../model/child_order');
 module.exports = {
     // 0 : chờ khách check đơn
     // 1 : đã vận chuyển
@@ -16,6 +17,7 @@ module.exports = {
         let linkOrder = req.body.linkOrder;
         size = req.body.size;
         let quantity = req.body.quantity;
+
         let address_ship = req.body.address_ship;
         let image = req.body.image;
         let data_order = Date.now();
@@ -29,14 +31,17 @@ module.exports = {
         let trackDas = "";
         let trackFedex = "";
         let nameShiper = req.body.nameShiper;
+        let idOrder = req.body.idOrder;
+        let realquantity = 0;
 
         let pay_price = 0;
-        if (linkOrder && quantity && address_ship && image && nation && idShiper && nameProduct && price && token && nameShiper) {
+        if (linkOrder && quantity && address_ship && image && nation && idShiper && nameProduct && price && token && nameShiper && idOrder) {
             pay_price = price * 0.6;
             const order = new Order({
                 linkOrder: linkOrder,
                 size: size,
                 quantity: quantity,
+                realquantity: quantity,
                 address_ship: address_ship,
                 image: image,
                 data_order: data_order,
@@ -79,6 +84,47 @@ module.exports = {
             });
         }
     },
+
+
+    childorder : async (req, res) => {
+        let token = req.body.token;
+       let idOrders_mother = req.body.idOrders_mother;
+       let order_quantity = req.body.order_quantity;
+       let trackFedex = req.body.trackFedex;
+       let trackDas = req.body.trackDas;
+       if(idOrders_mother && order_quantity && trackFedex && trackDas){
+            let check = await Account.findOne({
+                token: token
+            });
+            if(check != null && check.permission ){
+                let order_mother = await Order.findOne({_id: idOrders_mother});
+                if(order_mother != null){
+                    let temp = order_mother.realquantity - order_quantity;
+                    const child_order = new Child_order({
+                        idOrders_mother: idOrders_mother,
+                        order_quantity: order_quantity,
+                        trackFedex: trackFedex,
+                        trackDas: trackDas,
+                    });
+                    let cr_order_child = await child_order.save();
+                    let update = await Order.updateOne({_id: idOrders_mother}, {realquantity: temp});
+                    res.status(200).json({
+                        message: "Đặt hàng thành công!",
+                        data: cr_order_child
+                    });
+                }else{
+                    res.status(400).json({
+                        message: "Đặt hàng thất bại!"
+                    });
+                }
+            }else{
+                res.status(400).json({
+                    message: "Không có quyền thực thi!"
+                });
+            }
+       }
+    },
+
     editorder: async (req, res) => {
         let update = req.body;
         let token = req.body.token;
@@ -275,7 +321,7 @@ module.exports = {
         });
         try{
             if (check.permission == 10) {
-                let result = await Order.findOneAndUpdate(filter, {status: 5});
+                let result = await Order.findOneAndUpdate(filter, {status: 4});
                 console.log(result);
                 if (result != null) {
                     res.status(200).json({
@@ -294,6 +340,37 @@ module.exports = {
         }catch(ex){
             res.status(400).json({
                 message: "Không có quyền thực thi!"
+            });
+        }
+    },
+
+    deleteorder: async (req, res) => {
+        try{
+            let token = req.body.token;
+            let _id = req.body._id;
+            let check = await Account.findOne({token: token});
+            if(check.permission == 10) {
+                const filter = {
+                    _id: _id
+                }
+                let delete_result = await Order.findOneAndDelete(filter);
+                if (delete_result != null) {
+                    res.status(200).json({
+                        message: "Xóa đơn hàng thành công!"
+                    });
+                }else{
+                    res.status(400).json({
+                        message: "Xóa đơn hàng thất bại!"
+                    });
+                }
+            }else{
+                res.status(400).json({
+                    message: "Không có quyền thực thi!"
+                });
+            }
+        }catch(err){
+            res.status(400).json({
+                message: "Lỗi hệ thống"
             });
         }
     },
