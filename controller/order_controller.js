@@ -25,7 +25,7 @@ module.exports = {
         let idOrder = req.body.idOrder;
         let realquantity = 0;
         let pay_price = 0;
-        pay_price = price * 0.6;
+        pay_price = req.body.price * 0.6;
         const order = new Order({
             linkOrder: req.body.linkOrder,
             size: req.body.size,

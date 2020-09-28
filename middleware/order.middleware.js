@@ -60,6 +60,18 @@ module.exports = {
             });
             return;
         }
+        if (!req.body.token) {
+            res.status(400).json({
+                message: "Xác thực thất bại!"
+            });
+            return;
+        }
+        if (!req.body.price) {
+            res.status(400).json({
+                message: "Gia không được để trống!"
+            });
+            return;
+        }
         next();
     },
 
