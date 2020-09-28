@@ -1,7 +1,8 @@
 module.exports = function(app){
     var ctrAccount = require('../controller/account_controller');
-    app.route('/api/login').post(ctrAccount.login);
-    app.route('/api/change-password').post(ctrAccount.changePassword);
+    var middleware = require('../middleware/account.middleware');
+    app.route('/api/login').post(middleware.login, ctrAccount.login);
+    app.route('/api/change-password').post(middleware.changePassword, ctrAccount.changePassword);
     app.route('/api/logout').post(ctrAccount.logout);
     app.route('/api/reg').post(ctrAccount.reg);
     app.route('/api/getaccbynation').post(ctrAccount.getaccbynation);
