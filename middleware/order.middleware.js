@@ -66,12 +66,6 @@ module.exports = {
             });
             return;
         }
-        if (!req.body.price) {
-            res.status(400).json({
-                message: "Gia không được để trống!"
-            });
-            return;
-        }
         next();
     },
 
@@ -133,9 +127,9 @@ module.exports = {
         req.body.trackFedex = trackFedex.replace(/[^\w\s]/gi, "");
         req.body.trackFedex = trackFedex.replace(regsc, "");
 
-        let trackDas = req.body.trackDas;
-        req.body.trackDas = trackDas.replace(/[^\w\s]/gi, "");
-        req.body.trackDas = trackDas.replace(regsc, "");
+        // let trackDas = req.body.trackDas;
+        // req.body.trackDas = trackDas.replace(/[^\w\s]/gi, "");
+        // req.body.trackDas = trackDas.replace(regsc, "");
 
         let email = req.body.email;
         req.body.email = email.replace(regsc, "");
