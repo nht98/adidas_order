@@ -13,7 +13,7 @@ const db = require('./configs/connect.database')
 dotenv.config();
 
 const host = "0.0.0.0";
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 5555;
 //SERVER USE
 app.use(bodyParser.urlencoded({
     extended: true
