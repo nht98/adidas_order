@@ -66,12 +66,6 @@ module.exports = {
             });
             return;
         }
-        // if (!req.body.price) {
-        //     res.status(400).json({
-        //         message: "Gia không được để trống!"
-        //     });
-        //     return;
-        // }
         next();
     },
 
