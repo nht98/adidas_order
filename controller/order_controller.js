@@ -26,6 +26,8 @@ module.exports = {
         let realquantity = 0;
         let pay_price = 0;
         pay_price = req.body.price * 0.6;
+        let date = Date.now();
+        
         const order = new Order({
             linkOrder: req.body.linkOrder,
             size: req.body.size,
@@ -33,7 +35,7 @@ module.exports = {
             realquantity: req.body.quantity,
             address_ship: req.body.address_ship,
             image: req.body.image,
-            date_order: Date.now(),
+            date_order: date,
             nation: req.body.nation,
             idShiper: req.body.idShiper,
             nameProduct: req.body.nameProduct,
@@ -129,9 +131,8 @@ module.exports = {
             if (check.permission == 10) {
                 let findOrder = await Order.findOne(filter);
                 try {
-                    if (findOrder.quantity <= update) {
                         let result = await Order.findOneAndUpdate(filter, {
-                            quantity: update
+                            realquantity: update
                         });
                         if (result != null) {
                             res.status(200).json({
@@ -142,11 +143,6 @@ module.exports = {
                                 message: "Chỉnh sửa đơn hàng thất bại!"
                             });
                         }
-                    }else{
-                        res.status(400).json({
-                            message: "Chỉnh sửa đơn hàng thất bại!"
-                        });
-                    }
                 } catch (ex) {
                     res.status(400).json({
                         message: "Chỉnh sửa đơn hàng thất bại do không tìm thấy đơn hàng!"
