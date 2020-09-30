@@ -131,17 +131,33 @@ module.exports = {
             if (check.permission == 10) {
                 let findOrder = await Order.findOne(filter);
                 try {
-                    let result = await Order.findOneAndUpdate(filter, {
-                        realquantity: update
-                    });
-                    if (result != null) {
-                        res.status(200).json({
-                            message: "Chỉnh sửa đơn hàng thành công!"
-                        });
-                    } else {
+                    let change_realquantity = 0;
+                    let change = Math.abs(update - findOrder.quantity);
+                    if(update < 0){
                         res.status(400).json({
-                            message: "Chỉnh sửa đơn hàng thất bại!"
+                            message: "Số lượng phải lớn hơn hoặc bằng 0!"
                         });
+                    }else{
+                        if(update == 0){
+                            change_realquantity == 0;
+                        }else if(update >= findOrder.realquantity){
+                            change_realquantity = findOrder.realquantity + change;
+                       }else{
+                            change_realquantity = findOrder.realquantity - change;
+                       }
+                       let result = await Order.findOneAndUpdate(filter, {
+                           quantity: update, 
+                           realquantity: change_realquantity
+                       });
+                       if (result != null) {
+                           res.status(200).json({
+                               message: "Chỉnh sửa đơn hàng thành công!"
+                           });
+                       } else {
+                           res.status(400).json({
+                               message: "Chỉnh sửa đơn hàng thất bại!"
+                           });
+                       }
                     }
                 } catch (ex) {
                     res.status(400).json({
