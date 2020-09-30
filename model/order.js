@@ -7,7 +7,7 @@ const orderSchema = new mongoose.Schema({
     realquantity: Number,
     address_ship : String,
     image : String,
-    data_order : Date,
+    date_order : Date,
     nation : String,
     idShiper : mongoose.Types.ObjectId,
     nameProduct : String,
