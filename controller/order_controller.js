@@ -131,18 +131,18 @@ module.exports = {
             if (check.permission == 10) {
                 let findOrder = await Order.findOne(filter);
                 try {
-                        let result = await Order.findOneAndUpdate(filter, {
-                            realquantity: update
+                    let result = await Order.findOneAndUpdate(filter, {
+                        realquantity: update
+                    });
+                    if (result != null) {
+                        res.status(200).json({
+                            message: "Chỉnh sửa đơn hàng thành công!"
                         });
-                        if (result != null) {
-                            res.status(200).json({
-                                message: "Chỉnh sửa đơn hàng thành công!"
-                            });
-                        } else {
-                            res.status(400).json({
-                                message: "Chỉnh sửa đơn hàng thất bại!"
-                            });
-                        }
+                    } else {
+                        res.status(400).json({
+                            message: "Chỉnh sửa đơn hàng thất bại!"
+                        });
+                    }
                 } catch (ex) {
                     res.status(400).json({
                         message: "Chỉnh sửa đơn hàng thất bại do không tìm thấy đơn hàng!"
