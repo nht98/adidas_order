@@ -27,15 +27,7 @@ module.exports = {
         let pay_price = 0;
         pay_price = req.body.price * 0.6;
         let date = Date.now();
-        let date_order = new Date(date);
-        let datee = date_order.getDate();
-        let month = date_order.getMonth();
-        let year = 2000 + date_order.getYear() - 100;
-        let hours = date_order.getHours();
-        let minutes = date_order.getMinutes();
-        let seconds = date_order.getSeconds();
-        let rs_date = datee + "-" + month + "-" + year + " | " + hours+":" + minutes + ":" + seconds;
-        
+        let date_order = new Date(date).toISOString().replace(/T/, ' ').replace(/\..+/, '');       
         const order = new Order({
             linkOrder: req.body.linkOrder,
             size: req.body.size,
@@ -43,7 +35,7 @@ module.exports = {
             realquantity: req.body.quantity,
             address_ship: req.body.address_ship,
             image: req.body.image,
-            date_order: rs_date,
+            date_order: date_order,
             nation: req.body.nation,
             idShiper: req.body.idShiper,
             nameProduct: req.body.nameProduct,
