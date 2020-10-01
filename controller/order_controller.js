@@ -35,7 +35,7 @@ module.exports = {
             realquantity: req.body.quantity,
             address_ship: req.body.address_ship,
             image: req.body.image,
-            date_order: date_order,
+            data_order: date_order,
             nation: req.body.nation,
             idShiper: req.body.idShiper,
             nameProduct: req.body.nameProduct,
