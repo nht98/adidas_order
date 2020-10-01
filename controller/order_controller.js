@@ -27,6 +27,11 @@ module.exports = {
         let pay_price = 0;
         pay_price = req.body.price * 0.6;
         let date = Date.now();
+        let date_order = new Date(date);
+        let datee = date_order.getDate();
+        let month = date_order.getMonth();
+        let year = 2000 + date_order.getYear() - 100;
+        let rs_date = datee + "/" + month + "/" + year;
         
         const order = new Order({
             linkOrder: req.body.linkOrder,
@@ -35,7 +40,7 @@ module.exports = {
             realquantity: req.body.quantity,
             address_ship: req.body.address_ship,
             image: req.body.image,
-            date_order: date,
+            date_order: rs_date,
             nation: req.body.nation,
             idShiper: req.body.idShiper,
             nameProduct: req.body.nameProduct,
@@ -50,7 +55,7 @@ module.exports = {
         let check = await Account.findOne({
             token: token
         });
-        console.log(check)
+        // console.log(check)
         if (check != null && check.permission == 10) {
             order.save((err, resuft) => {
                 if (resuft) {
