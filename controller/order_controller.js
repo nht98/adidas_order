@@ -33,7 +33,7 @@ module.exports = {
             realquantity: req.body.quantity,
             address_ship: req.body.address_ship,
             image: req.body.image,
-            data_order: Date.now(),
+            date_order: Date.now(),
             nation: req.body.nation,
             idShiper: req.body.idShiper,
             nameProduct: req.body.nameProduct,
@@ -119,7 +119,7 @@ module.exports = {
         let update = req.body.quantity;
         let token = req.body.token;
         let _id = req.body._id;
-        const filter = {
+        let filter = {
             _id: _id
         }
         let check = await Account.findOne({
@@ -127,23 +127,25 @@ module.exports = {
         });
         try {
             if (check.permission == 10) {
-                let findOrder = Order.findOne({
-                    filter
-                });
+                let findOrder = await Order.findOne(filter);
                 try {
                     if (findOrder.quantity <= update) {
-                        let result = await Order.updateOne(filter, {
+                        let result = await Order.findOneAndUpdate(filter, {
                             quantity: update
                         });
                         if (result != null) {
                             res.status(200).json({
-                                message: "Thay đổi mật khẩu thành công!"
+                                message: "Chỉnh sửa đơn hàng thành công!"
                             });
                         } else {
                             res.status(400).json({
                                 message: "Chỉnh sửa đơn hàng thất bại!"
                             });
                         }
+                    }else{
+                        res.status(400).json({
+                            message: "Chỉnh sửa đơn hàng thất bại!"
+                        });
                     }
                 } catch (ex) {
                     res.status(400).json({
