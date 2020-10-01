@@ -31,7 +31,10 @@ module.exports = {
         let datee = date_order.getDate();
         let month = date_order.getMonth();
         let year = 2000 + date_order.getYear() - 100;
-        let rs_date = datee + "/" + month + "/" + year;
+        let hours = date_order.getHours();
+        let minutes = date_order.getMinutes();
+        let seconds = date_order.getSeconds();
+        let rs_date = datee + "-" + month + "-" + year + " | " + hours+":" + minutes + ":" + seconds;
         
         const order = new Order({
             linkOrder: req.body.linkOrder,
