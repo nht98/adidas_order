@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@chilkat/ck-node10-linux64": "^9.50.84",
+    "@chilkat/ck-node12-linux64": "^9.50.84",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
