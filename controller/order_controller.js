@@ -27,7 +27,9 @@ module.exports = {
         let pay_price = 0;
         pay_price = req.body.price * 0.6;
         let date = Date.now();
-        let date_order = new Date(date).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        let date_order = new Date(date).toISOString().replace(/T/, ' ').replace(/\..+/, '').toLocaleString('en-US', {
+            timeZone: 'Asia/Ho-Chi-Minh'
+          });;
         // let date = new Date()
         // let date_order = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().replace(/T/, ' ').replace(/\..+/, '');
         const order = new Order({
