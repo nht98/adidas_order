@@ -80,6 +80,9 @@ module.exports = {
     },
 
     childorder: async (req, res) => {
+        let date = new Date().toLocaleString('en-US', {
+            timeZone: 'Asia/Bangkok'
+          });
         let check = await Account.findOne({
             token: req.body.token
         });
@@ -97,6 +100,7 @@ module.exports = {
                         trackDas: (req.body.trackDas) ? req.body.trackDas : "",
                         idOrder: req.body.idOrder,
                         email: req.body.email,
+                        data_order: date,
                     });
                     let cr_order_child = await child_order.save();
                     let update = await Order.updateOne({
