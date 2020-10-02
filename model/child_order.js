@@ -7,6 +7,6 @@ const childorderSchema = new mongoose.Schema({
     trackFedex: String,
     idOrder: String,
     email: String,
-    date_order: {type: Date, default: Date.now},
+    data_order: String,
 })
 module.exports = mongoose.model("child_order", childorderSchema)
