@@ -26,10 +26,14 @@ module.exports = {
         let realquantity = 0;
         let pay_price = 0;
         pay_price = req.body.price * 0.6;
-        let date = Date.now();
-        let date_order = new Date(date).toISOString().replace(/T/, ' ').replace(/\..+/, '').toLocaleString('en-US', {
-            timeZone: 'Asia/Ho-Chi-Minh'
-          });;
+        // let date = Date.now();
+        let date = new Date().toLocaleString('en-US', {
+            timeZone: 'Asia/Bangkok'
+          });
+        
+        // let date_order = new Date(date).toISOString().replace(/T/, ' ').replace(/\..+/, '').toLocaleString('en-US', {
+        //     timeZone: 'Asia/Ho-Chi-Minh'
+        //   });;
         // let date = new Date()
         // let date_order = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().replace(/T/, ' ').replace(/\..+/, '');
         const order = new Order({
@@ -39,7 +43,7 @@ module.exports = {
             realquantity: req.body.quantity,
             address_ship: req.body.address_ship,
             image: req.body.image,
-            data_order: date_order,
+            data_order: date,
             nation: req.body.nation,
             idShiper: req.body.idShiper,
             nameProduct: req.body.nameProduct,
