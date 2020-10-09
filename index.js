@@ -11,32 +11,32 @@ const mongoose = require("mongoose")
 const fs = require('fs')
 const db = require('./configs/connect.database')
 dotenv.config();
-const chilkat = require('@chilkat/ck-node12-linux64');
+// const chilkat = require('@chilkat/ck-node12-linux64');
 const host = "0.0.0.0";
 const port = process.env.PORT || 5555;
 //SERVER USE
-function chilkatExample() {
-    var glob = new chilkat.Global();
-    var success = glob.UnlockBundle("Apolou.CBX1020_T6hA3h6njUoe");
-    if (success !== true) {
-        console.log(glob.LastErrorText);
-        return;
-    }
+// function chilkatExample() {
+//     var glob = new chilkat.Global();
+//     var success = glob.UnlockBundle("Apolou.CBX1020_T6hA3h6njUoe");
+//     if (success !== true) {
+//         console.log(glob.LastErrorText);
+//         return;
+//     }
 
-    var status = glob.UnlockStatus;
-    if (status == 2) {
-        console.log("Unlocked using purchased unlock code.");
-    } else {
-        console.log("Unlocked in trial mode.");
-    }
+//     var status = glob.UnlockStatus;
+//     if (status == 2) {
+//         console.log("Unlocked using purchased unlock code.");
+//     } else {
+//         console.log("Unlocked in trial mode.");
+//     }
 
-    // The LastErrorText can be examined in the success case to see if it was unlocked in
-    // trial more, or with a purchased unlock code.
-    console.log(glob.LastErrorText);
+//     // The LastErrorText can be examined in the success case to see if it was unlocked in
+//     // trial more, or with a purchased unlock code.
+//     console.log(glob.LastErrorText);
 
-}
+// }
 
-chilkatExample();
+// chilkatExample();
 
 app.use(bodyParser.urlencoded({
     extended: true
