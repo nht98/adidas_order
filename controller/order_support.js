@@ -1,5 +1,5 @@
 const request = require('request-promise');
-var http = new chilkat.Http();
+// var http = new chilkat.Http();
 module.exports = {
     getinfo: async (req, res) => {
         const rePage = /https:\/\/(.+?)\//gm
