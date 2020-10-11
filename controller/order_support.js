@@ -32,7 +32,8 @@ module.exports = {
                 console.log(body);
             }
         });
-
+    }
+}
         // try{ 
         //     var nation = rePage.exec(url);
         //     nation = nation[1];
@@ -73,5 +74,5 @@ module.exports = {
         //         message: ex
         //     })
         // }
-    },
-}
+//     },
+// }
