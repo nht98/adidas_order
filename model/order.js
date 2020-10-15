@@ -1,5 +1,4 @@
 const mongoose = require("mongoose")
-
 const orderSchema = new mongoose.Schema({
     linkOrder: String,
     size : String,
@@ -21,5 +20,5 @@ const orderSchema = new mongoose.Schema({
     email: String,
     pay_price: Number,
     nameShiper: String,
-})
+});
 module.exports = mongoose.model("order", orderSchema)

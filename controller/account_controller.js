@@ -16,6 +16,7 @@ module.exports = {
             username: username,
             password: md5(password),
         }
+        console.log(md5(password));
         const update = {
             token: newToken
         }
@@ -118,9 +119,9 @@ module.exports = {
                 avatar: "https://st.quantrimang.com/photos/image/2017/04/08/anh-dai-dien-FB-200.jpg",
                 date_reg: Date.now(),
                 token: "",
-                nation: req.body.address,
+                nation: req.body.nation,
             });
-            newAcc.save((err, resuft) => {
+            newAcc.save((err, resuft) => {  
                 if (resuft) {
                     res.status(200).json({
                         message: "Tạo tài khoản thành công!",
