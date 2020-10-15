@@ -230,19 +230,42 @@ module.exports = {
                     token: token
                 });
                 if (check.permission == 10) {
-                    let result = await Order.find();
+                    const perPage = 10;
+                    const page = parseInt(req.query.page || 1);
+                    const skip = (perPage * page) - perPage;
+                    const query = Order.find().sort({ data_order: -1 });
+                    const result = await query.skip(skip).limit(perPage);
+                    const totalOrder = await Order.countDocuments();
+                    const totalPage = Math.ceil(totalOrder / perPage);
                     res.status(200).json({
                         message: "Lấy danh sách đơn hàng thành công!",
-                        data: result
+                        data: result,
+                        meta: {
+                            page,
+                            perPage,
+                            totalOrder,
+                            totalPage,
+                          }
                     });
                 } else {
                     const filter = {
                         idShiper: check._id
-                    }
-                    let result = await Order.find(filter);
+                    };
+                    const perPage = 10;
+                    const page = parseInt(req.query.page || 1);
+                    const skip = (perPage * page) - perPage;
+                    const result = await Order.find(filter).sort({ data_order: -1 }).skip(skip).limit(perPage);
+                    const totalOrder = await Order.countDocuments(filter);
+                    const totalPage = Math.ceil(totalOrder / perPage);
                     res.status(200).json({
                         message: "Lấy danh sách đơn hàng thành công!",
-                        data: result
+                        data: result,
+                        meta: {
+                            page,
+                            perPage,
+                            totalOrder,
+                            totalPage,
+                          }
                     });
                 }
             } else {

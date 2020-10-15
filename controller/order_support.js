@@ -25,7 +25,7 @@ module.exports = {
                 'Upgrade-Insecure-Requests': '1'
             }
         };
-        request.post(options, function (errs, ress, body) {
+        request.get(options, function (errs, ress, body) {
             if (errs) {
                 console.log(errs);
             } else {
@@ -45,7 +45,7 @@ module.exports = {
 
     },
 
-    getinfo_usa: async (req, res) => {
+    getinfo_usa:  (req, res) => {
         var data = 0;
         let reName = /"name":"(.+?)","color"/gm;
         let reImage = /"image":\["(.+?)","/gm;
@@ -65,7 +65,7 @@ module.exports = {
                 'Upgrade-Insecure-Requests': '1'
             }
         };
-        await rp.get(options, function (errs, ress, body) {
+         request.get(options, function (errs, ress, body) {
             if (errs) {
                 console.log(errs);
             } else {
@@ -86,7 +86,7 @@ module.exports = {
 
     },
 
-    getinfo_ger: async (req, res) => {
+    getinfo_ger:  (req, res) => {
         var data = 0;
         let reName = /"name":"(.+?)","color"/gm;
         let reImage = /"image":\["(.+?)","/gm;
@@ -106,7 +106,7 @@ module.exports = {
                 'Upgrade-Insecure-Requests': '1'
             }
         };
-        await rp.get(options, function (errs, ress, body) {
+         request.get(options, function (errs, ress, body) {
             if (errs) {
                 console.log(errs);
             } else {
