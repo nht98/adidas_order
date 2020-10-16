@@ -291,19 +291,34 @@ module.exports = {
                     let rs_order = await Order.findOne({
                         _id: idOrders_mother
                     });
+                    let filter = {
+                        idOrders_mother: idOrders_mother
+                    }
+                    let perPage = 10;
+                    let page = parseInt(req.query.page || 1);
+                    let skip = (perPage * page) - perPage;
                     let rs = await Child_order.find({
                         idOrders_mother: idOrders_mother
-                    });
+                    }).sort({ data_order: -1 }).skip(skip).limit(perPage);
+                    let totalChild_Order = await Child_order.countDocuments(filter);
+                    let totalPage = Math.ceil(totalChild_Order / perPage);
                     let total_price = rs_order.price * rs.length;
                     let total_pay = rs_order.pay_price * rs.length;
                     let quantity_remaining = rs_order.realquantity + "/" + rs_order.quantity;
+                    
                     res.status(200).json({
                         message: "Lấy thông tin đơn hàng thành công!",
                         data: rs_order,
                         data_child: rs,
                         total_price: total_price,
                         total_pay: total_pay,
-                        quantity_remaining: quantity_remaining
+                        quantity_remaining: quantity_remaining,
+                        meta: {
+                            page,
+                            perPage,
+                            totalChild_Order,
+                            totalPage,
+                          }
                     });
                 }
             } else {
@@ -330,20 +345,42 @@ module.exports = {
                 const filter = {
                     status: status,
                 }
-                let result = await Order.find(filter);
+                let perPage = 10;
+                let page = parseInt(req.query.page || 1);
+                let skip = (perPage * page) - perPage;
+                let result = await Order.find(filter).sort({ data_order: -1 }).skip(skip).limit(perPage);
+                let totalOrder = await Order.countDocuments(filter);
+                let totalPage = Math.ceil(totalOrder / perPage);
                 res.status(200).json({
                     message: "Lấy danh sách đơn hàng thành công!",
-                    data: result
+                    data: result,
+                    meta: {
+                        page,
+                        perPage,
+                        totalOrder,
+                        totalPage,
+                      }
                 });
             } else {
                 const filter = {
                     status: status,
                     idShiper: check._id
                 }
-                let result = await Order.find(filter);
+                let perPage = 10;
+                let page = parseInt(req.query.page || 1);
+                let skip = (perPage * page) - perPage;
+                let result = await Order.find(filter).sort({ data_order: -1 }).skip(skip).limit(perPage);
+                let totalOrder = await Order.countDocuments(filter);
+                let totalPage = Math.ceil(totalOrder / perPage);
                 res.status(200).json({
                     message: "Lấy danh sách đơn hàng thành công!",
-                    data: result
+                    data: result,
+                    meta: {
+                        page,
+                        perPage,
+                        totalOrder,
+                        totalPage,
+                      }
                 });
             }
         } else {
