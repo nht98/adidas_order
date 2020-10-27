@@ -3,6 +3,7 @@ const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const ObjectId = require('mongodb').ObjectId;
 const accs = require('../model/account.js');
+const { KeyObject } = require('crypto');
 
 module.exports = {
     login: async (req, res) => {
@@ -148,6 +149,7 @@ module.exports = {
         if (check != null && check.permission == 10) {
             const filter = {
                 nation: nation,
+                permission: 1
             }
             if (nation == "US" || nation == "JP" || nation == "GER") {
                 let result = await accs.find(filter);
@@ -190,3 +192,4 @@ module.exports = {
         }
     },
 }
+    
