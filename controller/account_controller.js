@@ -122,18 +122,28 @@ module.exports = {
                 token: "",
                 nation: req.body.nation,
             });
-            newAcc.save((err, resuft) => {  
-                if (resuft) {
-                    res.status(200).json({
-                        message: "Tạo tài khoản thành công!",
-                        data: resuft
-                    });
-                } else {
-                    res.status(400).json({
-                        message: "Tạo tài khoản thất bại"
-                    });
-                }
-            });
+            let filter = {
+                username: req.body.username,
+            }
+            let check_exist = await accs.findOne(filter);
+            if(check_exist != null) {
+                res.status(400).json({
+                    message: 'Tài khoản đã tồn tại'
+                });
+            }else{
+                newAcc.save((err, resuft) => {  
+                    if (resuft) {
+                        res.status(200).json({
+                            message: "Tạo tài khoản thành công!",
+                            data: resuft
+                        });
+                    } else {
+                        res.status(400).json({
+                            message: "Tạo tài khoản thất bại"
+                        });
+                    }
+                });
+            }
         } else {
             res.status(400).json({
                 message: "Không có quyền thực thi!"
