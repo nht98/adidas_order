@@ -68,7 +68,7 @@ module.exports = {
             });
             return;
         }
-        if(!req.body.address){
+        if(!req.body.nation){
             res.status(400).json({
                 message: "Vui lòng chọn quốc gia cho tài khoản"
             });
