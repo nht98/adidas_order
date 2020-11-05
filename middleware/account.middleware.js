@@ -74,6 +74,12 @@ module.exports = {
             });
             return;
         }
+        if(!req.body.address){
+            res.status(400).json({
+                message: "Vui lòng chọn địa chỉ cho tài khoản"
+            });
+            return;
+        }
         next();
     },
 }
