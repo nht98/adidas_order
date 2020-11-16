@@ -13,7 +13,7 @@ const db = require('./configs/connect.database')
 dotenv.config();
 // const chilkat = require('@chilkat/ck-node12-linux64');
 const host = "0.0.0.0";
-const port = process.env.PORT || 5555;
+const port = process.env.PORT || 3000;
 //SERVER USE
 // function chilkatExample() {
 //     var glob = new chilkat.Global();
