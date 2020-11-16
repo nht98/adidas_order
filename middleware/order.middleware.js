@@ -89,7 +89,12 @@ module.exports = {
             });
             return;
         }
-
+        if (req.body.order_quantity < 0) {
+            res.status(400).json({
+                message: "Mời nhập lại số lượng đơn hàng"
+            });
+            return;
+        }
         if (!req.body.trackFedex) {
             res.status(400).json({
                 message: "TrackFedex được để trống"

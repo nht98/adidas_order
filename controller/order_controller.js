@@ -1,7 +1,3 @@
-const fs = require('fs');
-const md5 = require('md5');
-const jwt = require('jsonwebtoken');
-const ObjectId = require('mongodb').ObjectId;
 const Order = require('../model/order.js');
 const Account = require('../model/account.js');
 const Child_order = require('../model/child_order');
@@ -26,11 +22,13 @@ module.exports = {
         let realquantity = 0;
         let pay_price = 0;
         pay_price = req.body.price * 0.6;
+        let total = 0;
+        total = (req.body.quantity * pay_price) * (1 - (req.body.discount / 100));
         // let date = Date.now();
         let date = new Date().toLocaleString('en-US', {
             timeZone: 'Asia/Bangkok'
-          });
-        
+        });
+
         // let date_order = new Date(date).toISOString().replace(/T/, ' ').replace(/\..+/, '').toLocaleString('en-US', {
         //     timeZone: 'Asia/Ho-Chi-Minh'
         //   });;
@@ -54,6 +52,8 @@ module.exports = {
             pay_price: pay_price,
             nameShiper: req.body.nameShiper,
             idOrder: idOrder,
+            discount: req.body.discount,
+            total: total,
         });
         let check = await Account.findOne({
             token: token
@@ -82,7 +82,7 @@ module.exports = {
     childorder: async (req, res) => {
         let date = new Date().toLocaleString('en-US', {
             timeZone: 'Asia/Bangkok'
-          });
+        });
         let check = await Account.findOne({
             token: req.body.token
         });
@@ -98,6 +98,7 @@ module.exports = {
                         order_quantity: req.body.order_quantity,
                         trackFedex: req.body.trackFedex,
                         trackDas: (req.body.trackDas) ? req.body.trackDas : "",
+                        status: (req.body.status) ? req.body.status : "",
                         idOrder: req.body.idOrder,
                         email: req.body.email,
                         data_order: date,
@@ -145,31 +146,31 @@ module.exports = {
                 try {
                     let change_realquantity = 0;
                     let change = Math.abs(update - findOrder.quantity);
-                    if(update < 0){
+                    if (update < 0) {
                         res.status(400).json({
                             message: "Số lượng phải lớn hơn hoặc bằng 0!"
                         });
-                    }else{
-                        if(update == 0){
+                    } else {
+                        if (update == 0) {
                             change_realquantity == 0;
-                        }else if(update >= findOrder.realquantity){
+                        } else if (update >= findOrder.realquantity) {
                             change_realquantity = findOrder.realquantity + change;
-                       }else{
+                        } else {
                             change_realquantity = findOrder.realquantity - change;
-                       }
-                       let result = await Order.findOneAndUpdate(filter, {
-                           quantity: update, 
-                           realquantity: change_realquantity
-                       });
-                       if (result != null) {
-                           res.status(200).json({
-                               message: "Chỉnh sửa đơn hàng thành công!"
-                           });
-                       } else {
-                           res.status(400).json({
-                               message: "Chỉnh sửa đơn hàng thất bại!"
-                           });
-                       }
+                        }
+                        let result = await Order.findOneAndUpdate(filter, {
+                            quantity: update,
+                            realquantity: change_realquantity
+                        });
+                        if (result != null) {
+                            res.status(200).json({
+                                message: "Chỉnh sửa đơn hàng thành công!"
+                            });
+                        } else {
+                            res.status(400).json({
+                                message: "Chỉnh sửa đơn hàng thất bại!"
+                            });
+                        }
                     }
                 } catch (ex) {
                     res.status(400).json({
@@ -197,7 +198,7 @@ module.exports = {
             let check = await Account.findOne({
                 token: token
             });
-            if (check.permission == 10) {
+            if (check.permission == 10 || check.permission == 1) {
                 let result = await Order.findOneAndUpdate(filter, {
                     status: 4
                 });
@@ -233,7 +234,9 @@ module.exports = {
                     const perPage = 10;
                     const page = parseInt(req.query.page || 1);
                     const skip = (perPage * page) - perPage;
-                    const query = Order.find().sort({ data_order: -1 });
+                    const query = Order.find().sort({
+                        data_order: -1
+                    });
                     const result = await query.skip(skip).limit(perPage);
                     const totalOrder = await Order.countDocuments();
                     const totalPage = Math.ceil(totalOrder / perPage);
@@ -245,7 +248,7 @@ module.exports = {
                             perPage,
                             totalOrder,
                             totalPage,
-                          }
+                        }
                     });
                 } else {
                     const filter = {
@@ -254,9 +257,15 @@ module.exports = {
                     const perPage = 10;
                     const page = parseInt(req.query.page || 1);
                     const skip = (perPage * page) - perPage;
-                    const result = await Order.find(filter).sort({ data_order: -1 }).skip(skip).limit(perPage);
+                    const result = await Order.find(filter).sort({
+                        data_order: -1
+                    }).skip(skip).limit(perPage);
                     const totalOrder = await Order.countDocuments(filter);
                     const totalPage = Math.ceil(totalOrder / perPage);
+                    let total_s = 0;
+                    for(let i = 0; i < result.length; i++) {
+                        total_s += result[i].total;
+                    }
                     res.status(200).json({
                         message: "Lấy danh sách đơn hàng thành công!",
                         data: result,
@@ -265,7 +274,8 @@ module.exports = {
                             perPage,
                             totalOrder,
                             totalPage,
-                          }
+                            totalPrice: total_s,
+                        }
                     });
                 }
             } else {
@@ -300,13 +310,15 @@ module.exports = {
                     let skip = (perPage * page) - perPage;
                     let rs = await Child_order.find({
                         idOrders_mother: idOrders_mother
-                    }).sort({ data_order: -1 }).skip(skip).limit(perPage);
+                    }).sort({
+                        data_order: -1
+                    }).skip(skip).limit(perPage);
                     let totalChild_Order = await Child_order.countDocuments(filter);
                     let totalPage = Math.ceil(totalChild_Order / perPage);
                     let total_price = rs_order.price * rs.length;
                     let total_pay = rs_order.pay_price * rs.length;
                     let quantity_remaining = rs_order.realquantity + "/" + rs_order.quantity;
-                    
+
                     res.status(200).json({
                         message: "Lấy thông tin đơn hàng thành công!",
                         data: rs_order,
@@ -319,7 +331,7 @@ module.exports = {
                             perPage,
                             totalChild_Order,
                             totalPage,
-                          }
+                        }
                     });
                 }
             } else {
@@ -337,8 +349,7 @@ module.exports = {
     getorderbystatus: async (req, res) => {
         let token = req.body.token;
         let status = req.body.status;
-
-        if (token) {
+        if (token != null) {
             let check = await Account.findOne({
                 token: token
             });
@@ -349,7 +360,9 @@ module.exports = {
                 let perPage = 10;
                 let page = parseInt(req.query.page || 1);
                 let skip = (perPage * page) - perPage;
-                let result = await Order.find(filter).sort({ data_order: -1 }).skip(skip).limit(perPage);
+                let result = await Order.find(filter).sort({
+                    data_order: -1
+                }).skip(skip).limit(perPage);
                 let totalOrder = await Order.countDocuments(filter);
                 let totalPage = Math.ceil(totalOrder / perPage);
                 res.status(200).json({
@@ -360,7 +373,7 @@ module.exports = {
                         perPage,
                         totalOrder,
                         totalPage,
-                      }
+                    }
                 });
             } else {
                 const filter = {
@@ -370,7 +383,9 @@ module.exports = {
                 let perPage = 10;
                 let page = parseInt(req.query.page || 1);
                 let skip = (perPage * page) - perPage;
-                let result = await Order.find(filter).sort({ data_order: -1 }).skip(skip).limit(perPage);
+                let result = await Order.find(filter).sort({
+                    data_order: -1
+                }).skip(skip).limit(perPage);
                 let totalOrder = await Order.countDocuments(filter);
                 let totalPage = Math.ceil(totalOrder / perPage);
                 res.status(200).json({
@@ -381,7 +396,7 @@ module.exports = {
                         perPage,
                         totalOrder,
                         totalPage,
-                      }
+                    }
                 });
             }
         } else {
@@ -425,7 +440,6 @@ module.exports = {
             });
         }
     },
-
     deleteorder: async (req, res) => {
         try {
             let token = req.body.token;
