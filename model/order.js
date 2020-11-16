@@ -20,5 +20,7 @@ const orderSchema = new mongoose.Schema({
     email: String,
     pay_price: Number,
     nameShiper: String,
+    discount: Number,
+    total: Number,
 });
 module.exports = mongoose.model("order", orderSchema)

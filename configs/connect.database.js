@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 async function connect(){
     try{
-        await mongoose.connect('mongodb://myUserAdmin:NguyenHoangThang@171.244.38.52:27017/test_db?authSource=admin', {
+        await mongoose.connect('mongodb://myuser:NguyenHoangThang@45.76.153.75:27017/adidas_order?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useFindAndModify: false,
