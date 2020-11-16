@@ -146,9 +146,9 @@ module.exports = {
                 try {
                     let change_realquantity = 0;
                     let change = Math.abs(update - findOrder.quantity);
-                    if (update < 0) {
+                    if (update < 0 || update < findOrder.quantity) {
                         res.status(400).json({
-                            message: "Số lượng phải lớn hơn hoặc bằng 0!"
+                            message: "Mời nhập lại số lượng"
                         });
                     } else {
                         if (update == 0) {
@@ -160,7 +160,8 @@ module.exports = {
                         }
                         let result = await Order.findOneAndUpdate(filter, {
                             quantity: update,
-                            realquantity: change_realquantity
+                            realquantity: change_realquantity,
+                            total: (update * findOrder.pay_price) * (1 - (findOrder.discount / 100))
                         });
                         if (result != null) {
                             res.status(200).json({
