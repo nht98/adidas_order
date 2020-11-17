@@ -21,6 +21,7 @@
     "install": "^0.13.0",
     "jsonwebtoken": "^8.5.1",
     "md5": "^2.3.0",
+    "moment": "^2.29.1",
     "mongodb": "^3.6.2",
     "mongoose": "^5.10.5",
     "morgan": "^1.10.0",
