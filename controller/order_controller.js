@@ -1,6 +1,7 @@
 const Order = require('../model/order.js');
 const Account = require('../model/account.js');
 const Child_order = require('../model/child_order');
+const moment = require("moment");
 const {
     token
 } = require('morgan');
@@ -24,16 +25,12 @@ module.exports = {
         pay_price = req.body.price * 0.6;
         let total = 0;
         total = (req.body.quantity * pay_price) * (1 - (req.body.discount / 100));
-        // let date = Date.now();
-        let date = new Date().toLocaleString('en-US', {
-            timeZone: 'Asia/Bangkok'
-        });
 
-        // let date_order = new Date(date).toISOString().replace(/T/, ' ').replace(/\..+/, '').toLocaleString('en-US', {
-        //     timeZone: 'Asia/Ho-Chi-Minh'
-        //   });;
-        // let date = new Date()
-        // let date_order = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        let date = Date.now();
+        // let date = new Date().toLocaleString('en-US', {
+        //     timeZone: 'Asia/BangKok'
+        // });
+        // let date = moment().toDate().toLocaleDateString('en-US', {timeZone: 'Asia/BangKok'});
         const order = new Order({
             linkOrder: req.body.linkOrder,
             size: req.body.size,
@@ -80,9 +77,10 @@ module.exports = {
     },
 
     childorder: async (req, res) => {
-        let date = new Date().toLocaleString('en-US', {
-            timeZone: 'Asia/Bangkok'
-        });
+        // let date = new Date().toLocaleString('en-US', {
+        //     timeZone: 'Asia/Bangkok'
+        // });
+        let date = Date.now();
         let check = await Account.findOne({
             token: req.body.token
         });
@@ -226,11 +224,11 @@ module.exports = {
     getorderbyaccount: async (req, res) => {
         try {
             let token = req.body.token;
-
             if (token) {
                 let check = await Account.findOne({
                     token: token
                 });
+                console.log(check._id);
                 if (check.permission == 10) {
                     const perPage = 10;
                     const page = parseInt(req.query.page || 1);

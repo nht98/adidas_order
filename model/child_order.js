@@ -8,6 +8,6 @@ const childorderSchema = new mongoose.Schema({
     status: String,
     idOrder: String,
     email: String,
-    data_order: String,
+    data_order: Date,
 })
 module.exports = mongoose.model("child_order", childorderSchema)
