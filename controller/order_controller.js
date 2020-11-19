@@ -55,7 +55,6 @@ module.exports = {
         let check = await Account.findOne({
             token: token
         });
-        // console.log(check)
         if (check != null && check.permission == 10) {
             order.save((err, resuft) => {
                 if (resuft) {
@@ -228,7 +227,6 @@ module.exports = {
                 let check = await Account.findOne({
                     token: token
                 });
-                console.log(check._id);
                 if (check.permission == 10) {
                     const perPage = 10;
                     const page = parseInt(req.query.page || 1);
@@ -300,7 +298,7 @@ module.exports = {
                     let rs_order = await Order.findOne({
                         _id: idOrders_mother
                     });
-                    console.log(idOrders_mother);
+                   
                     let filter = {
                         idOrders_mother: idOrders_mother
                     }
