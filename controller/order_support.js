@@ -26,7 +26,9 @@ module.exports = {
         };
         request.get(options, function (errs, ress, body) {
             if (errs) {
-                console.log(errs);
+                res.status(400).json({
+                    message: "error"
+                })
             } else {
                 data = body;
                 let Image = reImage.exec(data);
@@ -79,7 +81,9 @@ module.exports = {
         };
          request.get(options, function (errs, ress, body) {
             if (errs) {
-                console.log(errs);
+                res.status(400).json({
+                    message: "error"
+                })
             } else {
                 data = body;
                 let Image = reImage.exec(data);
@@ -132,7 +136,9 @@ module.exports = {
         };
          request.get(options, function (errs, ress, body) {
             if (errs) {
-                console.log(errs);
+                res.status(400).json({
+                    message: "error"
+                })
             } else {
                 data = body;
                 let Image = reImage.exec(data);
