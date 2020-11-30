@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
-
+const dotenv = require('dotenv');
+dotenv.config();
 async function connect(){
     try{
-        await mongoose.connect('mongodb://myuser:NguyenHoangThang@45.76.153.75:27017/adidas_order?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false', {
+        await mongoose.connect(process.env.MONGODB_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useFindAndModify: false,
