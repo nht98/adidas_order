@@ -12,67 +12,74 @@ module.exports = {
     // 3 : huỷ đơn
     // 4 : đã thanh toán
     bookorder: async (req, res) => {
-        let size = 0;
-        let colorProduct = "";
-        colorProduct = req.body.colorProduct;
-        let token = req.body.token;
-        let status = 0;
-        let trackDas = "";
-        let trackFedex = "";
-        let idOrder = req.body.idOrder;
-        let realquantity = 0;
-        let pay_price = 0;
-        pay_price = req.body.price * 0.6;
-        let total = 0;
-        total = (req.body.quantity * pay_price) * (1 - (req.body.discount / 100));
-
-        let date = Date.now();
-        // let date = new Date().toLocaleString('en-US', {
-        //     timeZone: 'Asia/BangKok'
-        // });
-        // let date = moment().toDate().toLocaleDateString('en-US', {timeZone: 'Asia/BangKok'});
-        const order = new Order({
-            linkOrder: req.body.linkOrder,
-            size: req.body.size,
-            quantity: req.body.quantity,
-            realquantity: req.body.quantity,
-            address_ship: req.body.address_ship,
-            image: req.body.image,
-            data_order: date,
-            nation: req.body.nation,
-            idShiper: req.body.idShiper,
-            nameProduct: req.body.nameProduct,
-            price: req.body.price,
-            status: status,
-            trackDas: trackDas,
-            trackFedex: trackFedex,
-            pay_price: pay_price,
-            nameShiper: req.body.nameShiper,
-            idOrder: idOrder,
-            discount: req.body.discount,
-            total: total,
-        });
-        let check = await Account.findOne({
-            token: token
-        });
-        if (check != null && check.permission == 10) {
-            order.save((err, resuft) => {
-                if (resuft) {
-                    res.status(200).json({
-                        message: "Đặt hàng thành công!",
-                        data: resuft
-                    });
-                } else {
-                    res.status(400).json({
-                        message: "Đặt hàng thất bại"
-                    });
-                }
+        try{
+            let size = 0;
+            let colorProduct = "";
+            colorProduct = req.body.colorProduct;
+            let token = req.body.token;
+            let status = 0;
+            let trackDas = "";
+            let trackFedex = "";
+            let idOrder = req.body.idOrder;
+            let realquantity = 0;
+            let pay_price = 0;
+            pay_price = req.body.price * 0.6;
+            let total = 0;
+            total = (req.body.quantity * pay_price) * (1 - (req.body.discount / 100));
+    
+            let date = Date.now();
+            // let date = new Date().toLocaleString('en-US', {
+            //     timeZone: 'Asia/BangKok'
+            // });
+            // let date = moment().toDate().toLocaleDateString('en-US', {timeZone: 'Asia/BangKok'});
+            const order = new Order({
+                linkOrder: req.body.linkOrder,
+                size: req.body.size,
+                quantity: req.body.quantity,
+                realquantity: req.body.quantity,
+                address_ship: req.body.address_ship,
+                image: req.body.image,
+                data_order: date,
+                nation: req.body.nation,
+                idShiper: req.body.idShiper,
+                nameProduct: req.body.nameProduct,
+                price: req.body.price,
+                status: status,
+                trackDas: trackDas,
+                trackFedex: trackFedex,
+                pay_price: pay_price,
+                nameShiper: req.body.nameShiper,
+                idOrder: idOrder,
+                discount: req.body.discount,
+                total: total,
             });
-        } else {
+            let check = await Account.findOne({
+                token: token
+            });
+            if (check != null && check.permission == 10) {
+                order.save((err, resuft) => {
+                    if (resuft) {
+                        res.status(200).json({
+                            message: "Đặt hàng thành công!",
+                            data: resuft
+                        });
+                    } else {
+                        res.status(400).json({
+                            message: "Đặt hàng thất bại"
+                        });
+                    }
+                });
+            } else {
+                res.status(400).json({
+                    message: "Không có quyền thực thi!"
+                });
+            }
+        }catch(err){
             res.status(400).json({
-                message: "Không có quyền thực thi!"
-            });
+                message: "Lỗi hệ thống"
+            })
         }
+       
     },
 
     childorder: async (req, res) => {
@@ -260,7 +267,7 @@ module.exports = {
                     const totalOrder = await Order.countDocuments(filter);
                     const totalPage = Math.ceil(totalOrder / perPage);
                     let total_s = 0;
-                    for(let i = 0; i < result.length; i++) {
+                    for (let i = 0; i < result.length; i++) {
                         total_s += result[i].total;
                     }
                     res.status(200).json({
@@ -298,7 +305,7 @@ module.exports = {
                     let rs_order = await Order.findOne({
                         _id: idOrders_mother
                     });
-                   
+
                     let filter = {
                         idOrders_mother: idOrders_mother
                     }
@@ -344,63 +351,70 @@ module.exports = {
         }
     },
     getorderbystatus: async (req, res) => {
-        let token = req.body.token;
-        let status = req.body.status;
-        if (token != null) {
-            let check = await Account.findOne({
-                token: token
-            });
-            if (check.permission == 10) {
-                const filter = {
-                    status: status,
-                }
-                let perPage = 10;
-                let page = parseInt(req.query.page || 1);
-                let skip = (perPage * page) - perPage;
-                let result = await Order.find(filter).sort({
-                    data_order: -1
-                }).skip(skip).limit(perPage);
-                let totalOrder = await Order.countDocuments(filter);
-                let totalPage = Math.ceil(totalOrder / perPage);
-                res.status(200).json({
-                    message: "Lấy danh sách đơn hàng thành công!",
-                    data: result,
-                    meta: {
-                        page,
-                        perPage,
-                        totalOrder,
-                        totalPage,
-                    }
+        try {
+            let token = req.body.token;
+            let status = req.body.status;
+            if (token != null) {
+                let check = await Account.findOne({
+                    token: token
                 });
-            } else {
-                const filter = {
-                    status: status,
-                    idShiper: check._id
-                }
-                let perPage = 10;
-                let page = parseInt(req.query.page || 1);
-                let skip = (perPage * page) - perPage;
-                let result = await Order.find(filter).sort({
-                    data_order: -1
-                }).skip(skip).limit(perPage);
-                let totalOrder = await Order.countDocuments(filter);
-                let totalPage = Math.ceil(totalOrder / perPage);
-                res.status(200).json({
-                    message: "Lấy danh sách đơn hàng thành công!",
-                    data: result,
-                    meta: {
-                        page,
-                        perPage,
-                        totalOrder,
-                        totalPage,
+                if (check.permission == 10) {
+                    const filter = {
+                        status: status,
                     }
+                    let perPage = 10;
+                    let page = parseInt(req.query.page || 1);
+                    let skip = (perPage * page) - perPage;
+                    let result = await Order.find(filter).sort({
+                        data_order: -1
+                    }).skip(skip).limit(perPage);
+                    let totalOrder = await Order.countDocuments(filter);
+                    let totalPage = Math.ceil(totalOrder / perPage);
+                    res.status(200).json({
+                        message: "Lấy danh sách đơn hàng thành công!",
+                        data: result,
+                        meta: {
+                            page,
+                            perPage,
+                            totalOrder,
+                            totalPage,
+                        }
+                    });
+                } else {
+                    const filter = {
+                        status: status,
+                        idShiper: check._id
+                    }
+                    let perPage = 10;
+                    let page = parseInt(req.query.page || 1);
+                    let skip = (perPage * page) - perPage;
+                    let result = await Order.find(filter).sort({
+                        data_order: -1
+                    }).skip(skip).limit(perPage);
+                    let totalOrder = await Order.countDocuments(filter);
+                    let totalPage = Math.ceil(totalOrder / perPage);
+                    res.status(200).json({
+                        message: "Lấy danh sách đơn hàng thành công!",
+                        data: result,
+                        meta: {
+                            page,
+                            perPage,
+                            totalOrder,
+                            totalPage,
+                        }
+                    });
+                }
+            } else {
+                res.status(400).json({
+                    message: "Không có quyền thực thi!"
                 });
             }
-        } else {
+        }catch(ex) {
             res.status(400).json({
                 message: "Không có quyền thực thi!"
             });
         }
+
     },
     donepay: async (req, res) => {
         let token = req.body.token;
