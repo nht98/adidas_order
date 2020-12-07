@@ -34,13 +34,6 @@ module.exports = {
             return;
         }
 
-        if (!req.body.idShiper) {
-            res.status(400).json({
-                message: "ID shipper không được để trống"
-            });
-            return;
-        }
-
         if (!req.body.nameProduct) {
             res.status(400).json({
                 message: "Tên sản phẩm không được để trống"
@@ -51,12 +44,6 @@ module.exports = {
         if (!req.body.price) {
             res.status(400).json({
                 message: "Giá không được để trống"
-            });
-            return;
-        }
-        if (!req.body.nameShiper) {
-            res.status(400).json({
-                message: "Tên shipper không được để trống"
             });
             return;
         }

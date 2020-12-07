@@ -9,11 +9,16 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const mongoose = require("mongoose")
 const fs = require('fs')
+const fileupload = require('express-fileupload');
 const db = require('./configs/connect.database')
 dotenv.config();
 // const chilkat = require('@chilkat/ck-node12-linux64');
 const host = "0.0.0.0";
-const port = process.env.PORT || 5555;
+const port = process.env.PORT;
+app.use(fileupload({
+    useTempFiles : true,
+    tempFileDir : '/tmp/'
+  }));
 //SERVER USE
 // function chilkatExample() {
 //     var glob = new chilkat.Global();
@@ -39,7 +44,7 @@ const port = process.env.PORT || 5555;
 // chilkatExample();
 
 app.use(bodyParser.urlencoded({
-    extended: true
+    extended: false
 }));
 app.use(bodyParser.json());
 app.use(helmet());
