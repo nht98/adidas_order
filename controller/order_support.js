@@ -50,6 +50,7 @@ module.exports = {
         let reName = /"name":"(.+?)","color"/gm;
         let reImage = /"image":\["(.+?)","/gm;
         let rePrice = /"price":(.+?)}}/gm;
+        let reColor = /"color":\"(.+?)",\/"princebook/gm;
         let url = req.body.url;
         let options = {
             uri: url,
@@ -89,11 +90,14 @@ module.exports = {
                 let Image = reImage.exec(data);
                 let Name = reName.exec(data);
                 let Price = rePrice.exec(data);
+                let Color = reColor.exec(data);
+                console.log(Color);
                 res.status(200).json({
                     data: {
                         image: Image[1],
                         name: Name[1],
-                        price: Price[1]
+                        price: Price[1],
+                        // color: Color[1]
                     }
                 });
             }

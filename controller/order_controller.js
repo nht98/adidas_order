@@ -6,13 +6,13 @@ const {
     token
 } = require('morgan');
 module.exports = {
-    // 0 : chờ khách check đơn
+    // 0 : chờ shipper check đơn
     // 1 : đã vận chuyển
     // 2 : đã nhận
     // 3 : huỷ đơn
     // 4 : đã thanh toán
     bookorder: async (req, res) => {
-        try{
+        try {
             let size = 0;
             let colorProduct = "";
             colorProduct = req.body.colorProduct;
@@ -26,7 +26,7 @@ module.exports = {
             pay_price = req.body.price * 0.6;
             let total = 0;
             total = (req.body.quantity * pay_price) * (1 - (req.body.discount / 100));
-    
+
             let date = Date.now();
             // let date = new Date().toLocaleString('en-US', {
             //     timeZone: 'Asia/BangKok'
@@ -74,12 +74,12 @@ module.exports = {
                     message: "Không có quyền thực thi!"
                 });
             }
-        }catch(err){
+        } catch (err) {
             res.status(400).json({
                 message: "Lỗi hệ thống"
             })
         }
-       
+
     },
 
     childorder: async (req, res) => {
@@ -166,6 +166,8 @@ module.exports = {
                             quantity: update,
                             realquantity: change_realquantity,
                             total: (update * findOrder.pay_price) * (1 - (findOrder.discount / 100))
+                        }, {
+                            new: true
                         });
                         if (result != null) {
                             res.status(200).json({
@@ -194,26 +196,34 @@ module.exports = {
         }
     },
     cancelorder: async (req, res) => {
-        let token = req.body.token;
-        let _id = req.body._id;
-        const filter = {
-            _id: _id
-        }
-        if (token) {
-            let check = await Account.findOne({
-                token: token
-            });
-            if (check.permission == 10 || check.permission == 1) {
-                let result = await Order.findOneAndUpdate(filter, {
-                    status: 4
+        try {
+            let token = req.body.token;
+            let _id = req.body._id;
+            const filter = {
+                _id: _id
+            }
+            if (token) {
+                let check = await Account.findOne({
+                    token: token
                 });
-                if (result != null) {
-                    res.status(200).json({
-                        message: "Huỷ đơn thành công!"
+                if (check.permission == 10 || check.permission == 1) {
+                    let result = await Order.findOneAndUpdate(filter, {
+                        status: 3
+                    }, {
+                        new: true
                     });
+                    if (result != null) {
+                        res.status(200).json({
+                            message: "Huỷ đơn thành công!"
+                        });
+                    } else {
+                        res.status(400).json({
+                            message: "Huỷ đơn thất bại!"
+                        });
+                    }
                 } else {
                     res.status(400).json({
-                        message: "Huỷ đơn thất bại!"
+                        message: "Không có quyền thực thi!"
                     });
                 }
             } else {
@@ -221,11 +231,52 @@ module.exports = {
                     message: "Không có quyền thực thi!"
                 });
             }
-        } else {
+        } catch (ex) {
             res.status(400).json({
-                message: "Không có quyền thực thi!"
+                message: "Lỗi hệ thống"
             });
         }
+
+    },
+    receive_order: async (req, res) => {
+        try {
+            let token = req.body.token;
+            let _id = req.body._id;
+            let check = await Account.findOne({
+                token: token
+            });
+            if (check != null) {
+                if (check.permission == 10 || check.permission == 1) {
+                    let rs = await Order.findOneAndUpdate({
+                        _id: _id
+                    }, {
+                        status: 2,
+                        idShiper: check._id,
+                        nameShiper: check.full_name
+                    }, {
+                        new: true
+                    });
+                    if (rs != null) {
+                        res.status(200).json({
+                            message: 'Nhận đơn thành công!'
+                        });
+                    }else{
+                        res.status(200).json({
+                            message: 'Nhận đơn thất bại!'
+                        });
+                    }
+                }
+            } else {
+                res.status(404).json({
+                    message: "Không có quyền thực thi!"
+                });
+            }
+        } catch (ex) {
+            res.status(404).json({
+                message: "Lỗi hệ thống"
+            });
+        }
+
     },
     getorderbyaccount: async (req, res) => {
         try {
@@ -235,14 +286,41 @@ module.exports = {
                     token: token
                 });
                 if (check.permission == 10) {
+                    let filter = {};
+                    if (req.body.nameProduct) {
+                        filter.nameProduct = new RegExp(req.body.nameProduct.trim(), 'i');
+                    }
+                    if (req.body.size) {
+                        filter.size = req.body.size;
+                    }
+                    if (req.body.address_ship) {
+                        filter.address_ship = req.body.address_ship;
+                    }
+                    if (req.body.data_order) {
+                        filter.data_order = req.body.data_order;
+                    }
+                    if (req.body.nation) {
+                        filter.nation = req.body.nation;
+                    }
+                    if (req.body.status) {
+                        filter.status = req.body.status;
+                    }
+                    if (req.body.trackDas) {
+                        filter.trackDas = req.body.trackDas;
+                    }
+                    if (req.body.trackFedex) {
+                        filter.trackFedex = req.body.trackFedex;
+                    }
+                    if (req.body.nameShiper) {
+                        filter.nameShiper = req.body.nameShiper;
+                    }
                     const perPage = 10;
                     const page = parseInt(req.query.page || 1);
                     const skip = (perPage * page) - perPage;
-                    const query = Order.find().sort({
+                    const result = await Order.find(filter).sort({
                         data_order: -1
-                    });
-                    const result = await query.skip(skip).limit(perPage);
-                    const totalOrder = await Order.countDocuments();
+                    }).skip(skip).limit(perPage);
+                    const totalOrder = await Order.countDocuments(filter);
                     const totalPage = Math.ceil(totalOrder / perPage);
                     res.status(200).json({
                         message: "Lấy danh sách đơn hàng thành công!",
@@ -256,12 +334,47 @@ module.exports = {
                     });
                 } else {
                     const filter = {
-                        idShiper: check._id
+                        idShiper: check._id,
                     };
+                    const filter2 = {
+                        idShiper: {
+                            $exists: false
+                        }
+                    }
+                    if (req.body.nameProduct) {
+                        filter.nameProduct = new RegExp(req.body.nameProduct.trim(), 'i');
+                    }
+                    if (req.body.size) {
+                        filter.size = req.body.size;
+                    }
+                    if (req.body.address_ship) {
+                        filter.address_ship = req.body.address_ship;
+                    }
+                    if (req.body.data_order) {
+                        filter.data_order = req.body.data_order;
+                    }
+                    if (req.body.nation) {
+                        filter.nation = req.body.nation;
+                    }
+                    if (req.body.status) {
+                        filter.status = req.body.status;
+                    }
+                    if (req.body.trackDas) {
+                        filter.trackDas = req.body.trackDas;
+                    }
+                    if (req.body.trackFedex) {
+                        filter.trackFedex = req.body.trackFedex;
+                    }
+                    if (req.body.nameShiper) {
+                        filter.nameShiper = req.body.nameShiper;
+                    }
                     const perPage = 10;
                     const page = parseInt(req.query.page || 1);
                     const skip = (perPage * page) - perPage;
                     const result = await Order.find(filter).sort({
+                        data_order: -1
+                    }).skip(skip).limit(perPage);
+                    const result2 = await Order.find(filter2).sort({
                         data_order: -1
                     }).skip(skip).limit(perPage);
                     const totalOrder = await Order.countDocuments(filter);
@@ -272,6 +385,7 @@ module.exports = {
                     }
                     res.status(200).json({
                         message: "Lấy danh sách đơn hàng thành công!",
+                        data_not_receive: result2,
                         data: result,
                         meta: {
                             page,
@@ -409,7 +523,7 @@ module.exports = {
                     message: "Không có quyền thực thi!"
                 });
             }
-        }catch(ex) {
+        } catch (ex) {
             res.status(400).json({
                 message: "Không có quyền thực thi!"
             });
@@ -429,6 +543,8 @@ module.exports = {
             if (check.permission == 10) {
                 let result = await Order.findOneAndUpdate(filter, {
                     status: 4
+                }, {
+                    new: true
                 });
                 console.log(result);
                 if (result != null) {
@@ -480,6 +596,85 @@ module.exports = {
         } catch (err) {
             res.status(400).json({
                 message: "Lỗi hệ thống"
+            });
+        }
+    },
+    getorderpublic: async (req, res) => {
+        try {
+            let token = req.body.token;
+            if (token) {
+                let check = await Account.findOne({
+                    token: token
+                });
+                if (check.permission == 10 || check.permission == 1) {
+                    const filter = {
+                        idShiper: {
+                            $exists: false
+                        }
+                    }
+                    if (req.body.nameProduct) {
+                        filter.nameProduct = new RegExp(req.body.nameProduct.trim(), 'i');
+                    }
+                    if (req.body.size) {
+                        filter.size = req.body.size;
+                    }
+                    if (req.body.address_ship) {
+                        filter.address_ship = req.body.address_ship;
+                    }
+                    if (req.body.data_order) {
+                        filter.data_order = req.body.data_order;
+                    }
+                    if (req.body.nation) {
+                        filter.nation = req.body.nation;
+                    }
+                    if (req.body.status) {
+                        filter.status = req.body.status;
+                    }
+                    if (req.body.trackDas) {
+                        filter.trackDas = req.body.trackDas;
+                    }
+                    if (req.body.trackFedex) {
+                        filter.trackFedex = req.body.trackFedex;
+                    }
+                    if (req.body.nameShiper) {
+                        filter.nameShiper = req.body.nameShiper;
+                    }
+                    const perPage = 10;
+                    const page = parseInt(req.query.page || 1);
+                    const skip = (perPage * page) - perPage;
+                    const result = await Order.find(filter).sort({
+                        data_order: -1
+                    }).skip(skip).limit(perPage);
+                    const totalOrder = await Order.countDocuments(filter);
+                    const totalPage = Math.ceil(totalOrder / perPage);
+                    let total_s = 0;
+                    for (let i = 0; i < result.length; i++) {
+                        total_s += result[i].total;
+                    }
+                    res.status(200).json({
+                        message: "Lấy danh sách đơn hàng thành công!",
+                        data: result,
+                        meta: {
+                            page,
+                            perPage,
+                            totalOrder,
+                            totalPage,
+                            totalPrice: total_s,
+                        }
+                    });
+                } else {
+                    res.status(400).json({
+                        message: "Không có quyền thực thi!"
+                    });
+                }
+            } else {
+                res.status(400).json({
+                    message: "Không có quyền thực thi!"
+                });
+            }
+        } catch (ex) {
+            res.status(400).json({
+                message: "Lỗi hệ thống!"
             });
         }
     },
