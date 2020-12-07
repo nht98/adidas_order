@@ -10,4 +10,6 @@ module.exports = function(app){
     app.route('/api/deleteorder').post(ctrOrder.deleteorder);
     app.route('/api/childorder').post(middleware.childorder,ctrOrder.childorder);
     app.route('/api/getbyidorder').post(ctrOrder.getbyidorder);
+    app.route('/api/receiveorder').post(ctrOrder.receive_order);
+    app.route('/api/getorderpublic').post(ctrOrder.getorderpublic);
 }
