@@ -8,8 +8,8 @@ module.exports = {
         let reName = /"name":"(.+?)","image":/gm;
         let reImage = /"image":\["(.+?)","/gm;
         let rePrice = /"price":"(.+?)","/gm;
+        let reColor = /"item_color":"(.+?)","item_comment"/gm;
         let url = req.body.url;
-        // let host = rePage.exec(url);
         let options = {
             uri: url,
             headers: {
@@ -34,11 +34,13 @@ module.exports = {
                 let Image = reImage.exec(data);
                 let Name = reName.exec(data);
                 let Price = rePrice.exec(data);
+                let Color = reColor.exec(data);
                 res.status(200).json({
                     data: {
                         image: Image[1],
                         name: Name[1],
-                        price: Price[1]
+                        price: Price[1],
+                        color: Color[1]
                     }
                 });
             }
@@ -50,7 +52,7 @@ module.exports = {
         let reName = /"name":"(.+?)","color"/gm;
         let reImage = /"image":\["(.+?)","/gm;
         let rePrice = /"price":(.+?)}}/gm;
-        let reColor = /"color":\"(.+?)",\/"princebook/gm;
+        let reColor = /\\"color\\":\\"(.+?)\\",/gm;
         let url = req.body.url;
         let options = {
             uri: url,
@@ -91,13 +93,12 @@ module.exports = {
                 let Name = reName.exec(data);
                 let Price = rePrice.exec(data);
                 let Color = reColor.exec(data);
-                console.log(Color);
                 res.status(200).json({
                     data: {
                         image: Image[1],
                         name: Name[1],
                         price: Price[1],
-                        // color: Color[1]
+                        color: Color[1]
                     }
                 });
             }
@@ -109,6 +110,7 @@ module.exports = {
         let reName = /"name":"(.+?)","color"/gm;
         let reImage = /"image":\["(.+?)","/gm;
         let rePrice = /"price":(.+?)}}/gm;
+        let reColor = /\\"color\\":\\"(.+?)\\",/gm;
         let url = req.body.url;
         let options = {
             uri: url,
@@ -148,11 +150,13 @@ module.exports = {
                 let Image = reImage.exec(data);
                 let Name = reName.exec(data);
                 let Price = rePrice.exec(data);
+                let Color = reColor.exec(data);
                 res.status(200).json({
                     data: {
                         image: Image[1],
                         name: Name[1],
-                        price: Price[1]
+                        price: Price[1],
+                        color: Color[1]
                     }
                 });
             }
