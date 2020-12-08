@@ -128,4 +128,118 @@ module.exports = {
         
         next();
     },
+    getorderbyaccount: function(req, res, next) {
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        next();
+    },
+    receive_order: function(req, res, next) {
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        if(!req.body._id){
+            res.status(400).json({
+                message: "ID đơn hàng không được để trống"
+            });
+            return;
+        }
+        next();
+    },
+    getbyidorder: function(req, res, next) {
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        if(!req.body.idOrders_mother){
+            res.status(400).json({
+                message: "ID đơn hàng không được để trống"
+            });
+            return;
+        }
+        next();
+    },
+    getorderbystatus: function(req, res, next) {
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        if(!req.body.status){
+            res.status(400).json({
+                message: "status không được để trống"
+            });
+            return;
+        }
+        next();
+    },
+    donepay: function(req, res, next) {
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        if(!req.body._id){
+            res.status(400).json({
+                message: "ID đơn hàng không được để trống"
+            });
+            return;
+        }
+        next();
+    },
+    getorderpublic: function(req, res, next) {
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        next();
+    },
+    cancelorder: function(req, res, next) {
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        if(!req.body._id){
+            res.status(400).json({
+                message: "ID đơn hàng không được để trống"
+            });
+            return;
+        }
+        next();
+    },
+    editorder: function(req, res, next) {
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        if(!req.body.quantity){
+            res.status(400).json({
+                message: "Số lượng đơn hàng không được để trống"
+            });
+            return;
+        }
+        if(!req.body._id){
+            res.status(400).json({
+                message: "ID đơn hàng không được để trống"
+            });
+            return;
+        }
+        next();
+    },
 }
