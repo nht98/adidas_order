@@ -18,9 +18,9 @@ const orderSchema = new mongoose.Schema({
     trackFedex: String,
     idOrder: String,
     email: String,
-    pay_price: Number,
     nameShiper: String,
     discount: Number,
+    temp: Number,
     total: Number,
 });
 module.exports = mongoose.model("order", orderSchema)

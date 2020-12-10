@@ -12,4 +12,7 @@ module.exports = function(app){
     app.route('/api/getbyidorder').post(middleware.getbyidorder ,ctrOrder.getbyidorder);
     app.route('/api/receiveorder').post(middleware.receive_order ,ctrOrder.receive_order);
     app.route('/api/getorderpublic').post(middleware.getorderpublic, ctrOrder.getorderpublic);
+    app.route('/api/totalreceived').post(ctrOrder.total_received);
+    app.route('/api/totaldonepay').post(ctrOrder.total_donepay);
+    app.route('/api/totalwage').post(ctrOrder.total_wage);
 }
