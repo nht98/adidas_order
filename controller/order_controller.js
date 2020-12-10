@@ -2,28 +2,26 @@ const Order = require('../model/order.js');
 const Account = require('../model/account.js');
 const Child_order = require('../model/child_order');
 const moment = require("moment");
+const { get } = require('request-promise');
 module.exports = {
-    // 0 : chờ shipper check đơn
+    // 5 : chờ shipper check đơn
     // 1 : đã vận chuyển
     // 2 : đã nhận
     // 3 : huỷ đơn
     // 4 : đã thanh toán
     bookorder: async (req, res) => {
         try {
-            let size = 0;
             let colorProduct = "";
             colorProduct = req.body.colorProduct;
             let token = req.body.token;
-            let status = 0;
+            let status = 5;
             let trackDas = "";
             let trackFedex = "";
             let idOrder = req.body.idOrder;
-            let realquantity = 0;
-            let pay_price = 0;
-            pay_price = req.body.price * 0.6;
+            let temp = 0;
+            temp = req.body.price * req.body.quantity;
             let total = 0;
-            total = (req.body.quantity * pay_price) * (1 - (req.body.discount / 100));
-
+            total = (req.body.quantity * req.body.price) * (1 - (req.body.discount / 100));
             let date = Date.now();
             // let date = new Date().toLocaleString('en-US', {
             //     timeZone: 'Asia/BangKok'
@@ -44,10 +42,10 @@ module.exports = {
                 status: status,
                 trackDas: trackDas,
                 trackFedex: trackFedex,
-                pay_price: pay_price,
                 nameShiper: req.body.nameShiper,
                 idOrder: idOrder,
                 discount: req.body.discount,
+                temp: temp,
                 total: total,
             });
             let check = await Account.findOne({
@@ -170,7 +168,7 @@ module.exports = {
                             let result = await Order.findOneAndUpdate(filter, {
                                 quantity: update,
                                 realquantity: change_realquantity,
-                                total: (update * findOrder.pay_price) * (1 - (findOrder.discount / 100))
+                                total: (update * findOrder.price) * (1 - (findOrder.discount / 100))
                             }, {
                                 new: true
                             });
@@ -503,16 +501,16 @@ module.exports = {
                     }).skip(skip).limit(perPage);
                     let totalChild_Order = await Child_order.countDocuments(filter);
                     let totalPage = Math.ceil(totalChild_Order / perPage);
-                    let total_price = rs_order.price * rs.length;
-                    let total_pay = rs_order.pay_price * rs.length;
+                    // let total_price = rs_order.price * rs.length;
+                    // let total_pay = rs_order.total * rs.length;
                     let quantity_remaining = rs_order.realquantity + "/" + rs_order.quantity;
 
                     res.status(200).json({
                         message: "Lấy thông tin đơn hàng thành công!",
                         data: rs_order,
                         data_child: rs,
-                        total_price: total_price,
-                        total_pay: total_pay,
+                        // total_price: total_price,
+                        // total_pay: total_pay,
                         quantity_remaining: quantity_remaining,
                         meta: {
                             page,
@@ -754,4 +752,93 @@ module.exports = {
             });
         }
     },
+    total_received: async function (req, res){
+        try{
+            let token = req.body.token;
+            let check = await Account.findOne({token: token});
+            if(check.permission == 1){
+                let get_total = await Order.find({status: 2, idShiper: check._id});
+                if(get_total != null){
+                    res.status(200).json({
+                        message: "Thành công!",
+                        data: get_total.length,
+                    });
+                }else{
+                    res.status(400).json({
+                        message: "Thất bại"
+                    });
+                }
+            }else{
+                res.status(400).json({
+                    message: "Không có quyền thực thi!"
+                });
+            }
+            
+        }catch(ex){
+            res.status(400).json({
+                message: "Lỗi hệ thống!"
+            });
+        }
+    },
+    total_donepay: async function (req, res){
+        try{
+            let token = req.body.token;
+            let check = await Account.findOne({token: token});
+            if(check.permission == 1){
+                let get_total = await Order.find({status: 4, idShiper: check._id});
+                if(get_total != null){
+                    res.status(200).json({
+                        message: "Thành công!",
+                        data: get_total.length,
+                    });
+                }else{
+                    res.status(400).json({
+                        message: "Thất bại"
+                    });
+                }
+            }else{
+                res.status(400).json({
+                    message: "Không có quyền thực thi!"
+                });
+            }
+            
+        }catch(ex){
+            res.status(400).json({
+                message: "Lỗi hệ thống!"
+            });
+        }
+    },
+    total_wage: async function (req, res){
+        try{
+            let token = req.body.token;
+            let check = await Account.findOne({token: token});
+            if(check.permission == 1){
+                let get_total = await Order.find({idShiper: check._id});
+                let tong = 0;
+                for(let i=0; i < get_total.length; i++){
+                    let total_wage = (get_total[i].discount * get_total[i].temp)/100;
+                    tong += total_wage;
+                }
+                if(get_total != null){
+                    res.status(200).json({
+                        message: "Thành công!",
+                        data: tong,
+                    });
+                }else{
+                    res.status(400).json({
+                        message: "Thất bại"
+                    });
+                }
+            }else{
+                res.status(400).json({
+                    message: "Không có quyền thực thi!"
+                });
+            }
+            
+        }catch(ex){
+            res.status(400).json({
+                message: "Lỗi hệ thống!"
+            });
+        }
+    }
 }
