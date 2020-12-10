@@ -129,18 +129,32 @@ module.exports = {
         next();
     },
     getorderbyaccount: function(req, res, next) {
+        let resgc = /<>|<|>/ig;
         if(!req.body.token){
             res.status(400).json({
                 message: "Token không được để trống"
             });
             return;
         }
+        if(req.body.token.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
+            });
+            return;
+        }
         next();
     },
     receive_order: function(req, res, next) {
+        let resgc = /<>|<|>/ig;
         if(!req.body.token){
             res.status(400).json({
                 message: "Token không được để trống"
+            });
+            return;
+        }
+        if(req.body.token.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
             });
             return;
         }
@@ -150,12 +164,25 @@ module.exports = {
             });
             return;
         }
+        if(req.body._id.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
+            });
+            return;
+        }
         next();
     },
     getbyidorder: function(req, res, next) {
+        let resgc = /<>|<|>/ig;
         if(!req.body.token){
             res.status(400).json({
                 message: "Token không được để trống"
+            });
+            return;
+        }
+        if(req.body.token.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
             });
             return;
         }
@@ -165,12 +192,25 @@ module.exports = {
             });
             return;
         }
+        if(req.body.idOrders_mother.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
+            });
+            return;
+        }
         next();
     },
     getorderbystatus: function(req, res, next) {
+        let resgc = /<>|<|>/ig;
         if(!req.body.token){
             res.status(400).json({
                 message: "Token không được để trống"
+            });
+            return;
+        }
+        if(req.body.token.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
             });
             return;
         }
@@ -180,42 +220,81 @@ module.exports = {
             });
             return;
         }
+        if(req.body.status.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
+            });
+            return;
+        }
         next();
     },
     donepay: function(req, res, next) {
+        let resgc = /<>|<|>/ig;
         if(!req.body.token){
             res.status(400).json({
                 message: "Token không được để trống"
             });
             return;
         }
+        if(req.body.token.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
+            });
+            return;
+        }
         if(!req.body._id){
             res.status(400).json({
                 message: "ID đơn hàng không được để trống"
+            });
+            return;
+        }
+        if(req.body._id.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
             });
             return;
         }
         next();
     },
     getorderpublic: function(req, res, next) {
+        let resgc = /<>|<|>/ig;
         if(!req.body.token){
             res.status(400).json({
                 message: "Token không được để trống"
+            });
+            return;
+        }
+        if(req.body.token.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
             });
             return;
         }
         next();
     },
     cancelorder: function(req, res, next) {
+        let resgc = /<>|<|>/ig;
         if(!req.body.token){
             res.status(400).json({
                 message: "Token không được để trống"
             });
             return;
         }
+        if(req.body.token.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
+            });
+            return;
+        }
         if(!req.body._id){
             res.status(400).json({
                 message: "ID đơn hàng không được để trống"
+            });
+            return;
+        }
+        if(req.body._id.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
             });
             return;
         }
@@ -237,6 +316,54 @@ module.exports = {
         if(!req.body._id){
             res.status(400).json({
                 message: "ID đơn hàng không được để trống"
+            });
+            return;
+        }
+        next();
+    },
+    total_received: function(req, res, next) {
+        let resgc = /<>|<|>/ig;
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        if(req.body.token.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
+            });
+            return;
+        }
+        next();
+    },
+    total_donepay: function(req, res, next) {
+        let resgc = /<>|<|>/ig;
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        if(req.body.token.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
+            });
+            return;
+        }
+        next();
+    },
+    total_wage: function(req, res, next) {
+        let resgc = /<>|<|>/ig;
+        if(!req.body.token){
+            res.status(400).json({
+                message: "Token không được để trống"
+            });
+            return;
+        }
+        if(req.body.token.match(resgc)){
+            res.status(400).json({
+                message: "Mời nhập lại"
             });
             return;
         }
