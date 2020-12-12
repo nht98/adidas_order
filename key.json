@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "adidas-order",
+  "private_key_id": "5569e45d8917195261888043262f7b5b21bd7ae2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCyB2MEb6n7/N0h\nqyT+XgKFPeOq3YRZMxl+SDwV9vmiMnokp906TrjlwuLCfr92RXfeasPNohOWGGBn\nMwgfb1ysQYKnfnWMpiU2CHZxjxHSnU5vcGj6t+KCvylFgWh2idue5m4SpQKBVXSC\noGOIlZ8j9j5hskERDBDJR/4NlNdtIsO3YMhDBXSd/6mL/5r1oWqzilptkjvKB1oK\n57sScZsqyhQrkabqpcg2FUSlfKXtJUzurI5MlOVWy+1SjvbijnOjddEj+0aVFFpZ\nt4BmJeeG2kdqTokgWPmj+HqvglJ8fTPEoiryowlJ9xfSRJ4LlB03Sxh88EDYmLy3\nVFDUezPtAgMBAAECggEAKSS/44SS+mOkD2XoNMkxN+3nsdNkBOFkYOT8ze64Hp4f\n0FzjKdiLrr3tfhmg0gqX+1UdT2bHtAaKMQ+ALxOjjUPOmDsHm6vCKcym4vO3oL8u\nI18NQ/Q/awwW07Nmmw6dLQoAIlr0S0Oem5nJpwU9NChynk198ByjvIDg2+6sItJl\nQX1CCwdnKTvI0/QZmJ5PF6kcNnQy5n262lNpYE9YvE3nzFS0j/mQp8hmGu2yMHG8\nx+WMt//oDdXb7S6L1mdNTGnhTAc8EhG2pyFye9p0zq1moaXoOWeYTXDXTxEt+2bX\nOZN7FmDMmO878dsGhLR7ZQ+TJQvg4i5r2sxQjvvd2QKBgQDczFQ+SWbavt27p8Ok\nVTpeF8vdJeBVgzQR6Ue0T3RLT9n/lpxMT4ZJEZZ6if6+FaYzz0QXsyir7AnxjFfN\nBgtxC5aBF9aHQQ2VPn1C6EbEL8IUyOJJBB4LsrPdNmxnMKr06qGRBUt0fOHIo9I0\nWa68bGx7zrQ+u6nqVuz06+bQVwKBgQDOaXfoypLELxBQ8U0CJEZU4esc+p044fn3\nCKxNatl2MfkauvIpRiMJEzy83hKgLJ3w1YpB1qG8T8iLqV9W8LUc9yWQG6897+bY\nstaOzYhRQtecA8Ae/mJRAV+UCwtavTiG2QKVougt+RDDwQowGNAuXTnQBNLgx+1E\nJClfb57jWwKBgQCgYJ50W7ak/uxqKPJ3hByQSfKfYKqxEksZE3ws4WWUapzrBIfk\n+gKNQoQt39w0T99YVJ2eJVlOf3W9iPYhitl2tDcO77S4q6zlEe3EUplMWXA8zqlm\n5eG5F4WEEcrtrTEQEvlmMBVduHP729qMgfPlE1A9IahUxNUnzRny0QLnowKBgQC5\nGVdQSKiIiXPmQh0+uGzhnZ6LZCotYmgYIYzx98l+9p1eXRrf7GdqsfebnsGxJZGU\n8MmE9QYgqqM6qu42NrETgoYKzui9cC7hUK6bbLC7vmc/HxXgNVrRLZwaVDUgb+MK\n+fwZV/dBksJ36NpL+1Rk33ECm/DHZkHdA1ienqgrVQKBgHC/Z595xpExB3jIPdcW\nwgl96eIaAAF2TSrj3PBhp0svuzPZWnZ5CnZJy9r/hxV5v9HfsCBsSfPTFsCflAWJ\nIwlMMY+v6aBlNJVgmX2AcatXu6iI1+bk1iV3hnBDKlHDdgk2TTBql8P7XVipPcUK\nXV8yOI7EdFA8Rywd3MTMHaCO\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-46n30@adidas-order.iam.gserviceaccount.com",
+  "client_id": "103736267522748736874",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-46n30%40adidas-order.iam.gserviceaccount.com"
+}
