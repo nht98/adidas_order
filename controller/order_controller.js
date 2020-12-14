@@ -2,7 +2,17 @@ const Order = require('../model/order.js');
 const Account = require('../model/account.js');
 const Child_order = require('../model/child_order');
 const moment = require("moment");
-const { get } = require('request-promise');
+const {
+    get
+} = require('request-promise');
+const Pusher = require("pusher");
+const pusher = new Pusher({
+    appId: "1122326",
+    key: "5dbd1b837de45c65bb1e",
+    secret: "3acfdfb0caf6c6a6c9fb",
+    cluster: "ap1",
+    useTLS: true
+});
 module.exports = {
     // 5 : chờ shipper check đơn
     // 1 : đã vận chuyển
@@ -53,11 +63,16 @@ module.exports = {
             });
             if (check != null && check.permission == 10) {
                 order.save((err, resuft) => {
+
                     if (resuft) {
+                        pusher.trigger("my-channel", "my-event-datdon", {
+                            message: `Có đơn mới ở ${resuft.nation}, mời các shipper vào nhận hàng`
+                        });
                         res.status(200).json({
                             message: "Đặt hàng thành công!",
                             data: resuft
                         });
+
                     } else {
                         res.status(400).json({
                             message: "Đặt hàng thất bại"
@@ -226,6 +241,9 @@ module.exports = {
                         new: true
                     });
                     if (result != null) {
+                        pusher.trigger("my-channel", "my-event-huydon", {
+                            message: `${check.full_name} đã hủy đơn ${_id}`
+                        });
                         res.status(200).json({
                             message: "Huỷ đơn thành công!"
                         });
@@ -259,24 +277,37 @@ module.exports = {
                 token: token
             });
             if (check != null) {
-                if (check.permission == 10 || check.permission == 1) {
-                    let rs = await Order.findOneAndUpdate({
-                        _id: _id
-                    }, {
-                        status: 2,
-                        idShiper: check._id,
-                        nameShiper: check.full_name
-                    }, {
-                        new: true
+                if (check.permission == 1) {
+                    let test = await Order.findOne({
+                        _id: _id,
+                        status: 2
                     });
-                    if (rs != null) {
-                        res.status(200).json({
-                            message: 'Nhận đơn thành công!'
-                        });
+                    if (test != null) {
+                        res.status(400).json({
+                            message: 'Đơn hàng đã được nhận, vui lòng nhận đơn khác.'
+                        })
                     } else {
-                        res.status(200).json({
-                            message: 'Nhận đơn thất bại!'
+                        let rs = await Order.findOneAndUpdate({
+                            _id: _id
+                        }, {
+                            status: 2,
+                            idShiper: check._id,
+                            nameShiper: check.full_name
+                        }, {
+                            new: true
                         });
+                        if (rs != null) {
+                            pusher.trigger("my-channel", "my-event-nhandon", {
+                                message: `${check.full_name} đã nhận đơn ${_id}`
+                            });
+                            res.status(200).json({
+                                message: 'Nhận đơn thành công!'
+                            });
+                        } else {
+                            res.status(200).json({
+                                message: 'Nhận đơn thất bại!'
+                            });
+                        }
                     }
                 }
             } else {
@@ -396,29 +427,29 @@ module.exports = {
                     });
                 } else {
                     let filter = {};
-                    if(!req.body.key){
+                    if (!req.body.key) {
                         filter = {
                             idShiper: check._id
                         }
-                    }else{
+                    } else {
                         filter = {
                             idShiper: check._id,
-                        $or: [{
-                                nameProduct: new RegExp(req.body.key.trim(), 'i')
-                            },
-                            {
-                                size: new RegExp(req.body.key.trim(), 'i')
-                            },
-                            {
-                                address_ship: new RegExp(req.body.key.trim(), 'i')
-                            },
-                            {
-                                trackDas: new RegExp(req.body.key.trim(), 'i')
-                            },
-                            {
-                                trackFedex: new RegExp(req.body.key.trim(), 'i')
-                            },
-                        ]
+                            $or: [{
+                                    nameProduct: new RegExp(req.body.key.trim(), 'i')
+                                },
+                                {
+                                    size: new RegExp(req.body.key.trim(), 'i')
+                                },
+                                {
+                                    address_ship: new RegExp(req.body.key.trim(), 'i')
+                                },
+                                {
+                                    trackDas: new RegExp(req.body.key.trim(), 'i')
+                                },
+                                {
+                                    trackFedex: new RegExp(req.body.key.trim(), 'i')
+                                },
+                            ]
                         }
                     }
                     // let filter = {
@@ -640,7 +671,6 @@ module.exports = {
                 message: "Lỗi hệ thống"
             });
         }
-
     },
     deleteorder: async (req, res) => {
         try {
@@ -752,90 +782,104 @@ module.exports = {
             });
         }
     },
-    total_received: async function (req, res){
-        try{
+    total_received: async function (req, res) {
+        try {
             let token = req.body.token;
-            let check = await Account.findOne({token: token});
-            if(check.permission == 1){
-                let get_total = await Order.find({status: 2, idShiper: check._id});
-                if(get_total != null){
+            let check = await Account.findOne({
+                token: token
+            });
+            if (check.permission == 1) {
+                let get_total = await Order.find({
+                    status: 2,
+                    idShiper: check._id
+                });
+                if (get_total != null) {
                     res.status(200).json({
                         message: "Thành công!",
                         data: get_total.length,
                     });
-                }else{
+                } else {
                     res.status(400).json({
                         message: "Thất bại"
                     });
                 }
-            }else{
+            } else {
                 res.status(400).json({
                     message: "Không có quyền thực thi!"
                 });
             }
-            
-        }catch(ex){
+
+        } catch (ex) {
             res.status(400).json({
                 message: "Lỗi hệ thống!"
             });
         }
     },
-    total_donepay: async function (req, res){
-        try{
+    total_donepay: async function (req, res) {
+        try {
             let token = req.body.token;
-            let check = await Account.findOne({token: token});
-            if(check.permission == 1){
-                let get_total = await Order.find({status: 4, idShiper: check._id});
-                if(get_total != null){
+            let check = await Account.findOne({
+                token: token
+            });
+            if (check.permission == 1) {
+                let get_total = await Order.find({
+                    status: 4,
+                    idShiper: check._id
+                });
+                if (get_total != null) {
                     res.status(200).json({
                         message: "Thành công!",
                         data: get_total.length,
                     });
-                }else{
+                } else {
                     res.status(400).json({
                         message: "Thất bại"
                     });
                 }
-            }else{
+            } else {
                 res.status(400).json({
                     message: "Không có quyền thực thi!"
                 });
             }
-            
-        }catch(ex){
+
+        } catch (ex) {
             res.status(400).json({
                 message: "Lỗi hệ thống!"
             });
         }
     },
-    total_wage: async function (req, res){
-        try{
+    total_wage: async function (req, res) {
+        try {
             let token = req.body.token;
-            let check = await Account.findOne({token: token});
-            if(check.permission == 1){
-                let get_total = await Order.find({idShiper: check._id});
+            let check = await Account.findOne({
+                token: token
+            });
+            if (check.permission == 1) {
+                let get_total = await Order.find({
+                    idShiper: check._id
+                });
                 let tong = 0;
-                for(let i=0; i < get_total.length; i++){
-                    let total_wage = (get_total[i].discount * get_total[i].temp)/100;
+                for (let i = 0; i < get_total.length; i++) {
+                    let total_wage = (get_total[i].discount * get_total[i].temp) / 100;
                     tong += total_wage;
                 }
-                if(get_total != null){
+                if (get_total != null) {
                     res.status(200).json({
                         message: "Thành công!",
                         data: tong,
                     });
-                }else{
+                } else {
                     res.status(400).json({
                         message: "Thất bại"
                     });
                 }
-            }else{
+            } else {
                 res.status(400).json({
                     message: "Không có quyền thực thi!"
                 });
             }
-            
-        }catch(ex){
+
+        } catch (ex) {
             res.status(400).json({
                 message: "Lỗi hệ thống!"
             });
