@@ -74,8 +74,6 @@ rouOrder(app);
 let rouSupport = require('./routes/support.router');
 rouSupport(app);
 
-let rouNotifications = require('./routes/notification.router');
-rouNotifications(app);
 
 app.get('*', function (req, res) {
     // res.status(404).json({
