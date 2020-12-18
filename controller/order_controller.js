@@ -31,7 +31,7 @@ module.exports = {
             let temp = 0;
             temp = req.body.price * req.body.quantity;
             let total = 0;
-            total = (req.body.quantity * req.body.price) * (1 - (req.body.discount / 100));
+            total = (req.body.quantity * req.body.price) * (1 + (req.body.discount / 100));
             let date = Date.now();
             // let date = new Date().toLocaleString('en-US', {
             //     timeZone: 'Asia/BangKok'
